@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign Up · Smart Campus Event Planner</title>
+  <link rel="stylesheet" href="../public/css/style.css">
+</head>
+<body>
+
+  <!-- Shared navigation bar -->
+  <nav class="navbar">
+    <a class="brand" href="index.html">Smart Campus Event Planner</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="contact.html">About / Contact</a></li>
+      <li><a href="login.html">Login</a></li>
+      <li><a href="register.html" class="active">Sign Up</a></li>
+    </ul>
+  </nav>
+
+  <main class="auth-main">
+    <div class="auth-card">
+      <h1>Create your account</h1>
+      <p class="subtitle">Join to discover and register for campus events.</p>
+
+      <div id="form-banner" class="form-banner"></div>
+
+      <form id="register-form" novalidate>
+        <div class="form-group">
+          <label for="full-name">Full name</label>
+          <input type="text" id="full-name" name="fullName" placeholder="e.g. Erik Dahan" required>
+          <p class="error-message" id="full-name-error"></p>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="you@live.concordia.ca" required>
+          <p class="error-message" id="email-error"></p>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="At least 8 characters" required>
+          <p class="hint">Minimum 8 characters.</p>
+          <p class="error-message" id="password-error"></p>
+        </div>
+
+        <div class="form-group">
+          <label for="confirm-password">Confirm password</label>
+          <input type="password" id="confirm-password" name="confirmPassword" placeholder="Re-enter your password" required>
+          <p class="error-message" id="confirm-password-error"></p>
+        </div>
+
+        <div class="form-group">
+          <label for="role">I am a</label>
+          <select id="role" name="role" required>
+            <option value="">— Select a role —</option>
+            <option value="student">Student</option>
+            <option value="admin">Organizer / Admin</option>
+          </select>
+          <p class="error-message" id="role-error"></p>
+        </div>
+
+        <button type="submit" class="btn">Create Account</button>
+      </form>
+
+      <p class="auth-switch">
+        Already have an account? <a href="login.html">Log in</a>
+      </p>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>SOEN 287 · Smart Campus Event Planner · Summer 2026</p>
+  </footer>
+
+  <script src="../public/js/auth.js"></script>
+</body>
+</html>

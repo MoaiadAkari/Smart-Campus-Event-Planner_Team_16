@@ -1,0 +1,228 @@
+/* ============================================================
+   Smart Campus Event Planner — shared stylesheet
+   SOEN 287 · Deliverable 1
+   ============================================================ */
+
+/* ---- Design tokens (change the whole theme from here) ---- */
+:root {
+  --primary: #912338;        /* Concordia maroon */
+  --primary-dark: #6e1a2a;
+  --primary-light: #b54d61;
+  --bg: #f6f4f5;
+  --surface: #ffffff;
+  --text: #1f2023;
+  --text-muted: #6b6f76;
+  --border: #dcd8da;
+  --error: #c62828;
+  --success: #2e7d32;
+  --radius: 10px;
+  --shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* ---- Reset / base ---- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+  background-color: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ---- Navigation bar (shared across all pages) ---- */
+.navbar {
+  background-color: var(--primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.navbar .brand {
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.navbar .nav-links {
+  display: flex;
+  gap: 1rem;
+  list-style: none;
+  flex-wrap: wrap;
+}
+
+.navbar .nav-links a {
+  color: #fff;
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.navbar .nav-links a:hover,
+.navbar .nav-links a.active {
+  background-color: var(--primary-dark);
+}
+
+/* ---- Auth pages (login / register) ---- */
+.auth-main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+}
+
+.auth-card {
+  background-color: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 420px;
+  padding: 2rem;
+}
+
+.auth-card h1 {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.auth-card .subtitle {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+}
+
+/* ---- Forms ---- */
+.form-group {
+  margin-bottom: 1.1rem;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.35rem;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  font-size: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background-color: #fff;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: 2px solid var(--primary-light);
+  border-color: var(--primary);
+}
+
+/* red border when JS flags a field as invalid */
+.form-group input.invalid,
+.form-group select.invalid {
+  border-color: var(--error);
+}
+
+.hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-top: 0.25rem;
+}
+
+/* per-field error message (hidden until JS fills it) */
+.error-message {
+  color: var(--error);
+  font-size: 0.82rem;
+  margin-top: 0.3rem;
+  min-height: 1em;
+}
+
+/* banner shown at the top of the form (e.g. wrong credentials) */
+.form-banner {
+  display: none;
+  padding: 0.7rem 0.9rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.form-banner.error {
+  display: block;
+  background-color: #fdecea;
+  color: var(--error);
+  border: 1px solid #f5c6c0;
+}
+
+.form-banner.success {
+  display: block;
+  background-color: #e8f5e9;
+  color: var(--success);
+  border: 1px solid #c8e6c9;
+}
+
+/* ---- Buttons ---- */
+.btn {
+  display: inline-block;
+  width: 100%;
+  padding: 0.7rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: var(--primary);
+  color: #fff;
+  transition: background-color 0.15s ease;
+}
+
+.btn:hover {
+  background-color: var(--primary-dark);
+}
+
+.auth-switch {
+  text-align: center;
+  margin-top: 1.25rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* ---- Footer ---- */
+.footer {
+  text-align: center;
+  padding: 1rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+/* ---- Responsive tweaks ---- */
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 1.4rem;
+  }
+
+  .navbar {
+    justify-content: center;
+  }
+}

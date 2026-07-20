@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login · Smart Campus Event Planner</title>
+  <link rel="stylesheet" href="../public/css/style.css">
+</head>
+<body>
+
+  <!-- Shared navigation bar -->
+  <nav class="navbar">
+    <a class="brand" href="index.html">Smart Campus Event Planner</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="contact.html">About / Contact</a></li>
+      <li><a href="login.html" class="active">Login</a></li>
+      <li><a href="register.html">Sign Up</a></li>
+    </ul>
+  </nav>
+
+  <main class="auth-main">
+    <div class="auth-card">
+      <h1>Welcome back</h1>
+      <p class="subtitle">Log in to manage your campus events.</p>
+
+      <!-- Banner for form-level errors (e.g. wrong credentials) -->
+      <div id="form-banner" class="form-banner"></div>
+
+      <!-- novalidate: we handle validation ourselves in auth.js -->
+      <form id="login-form" novalidate>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" placeholder="you@live.concordia.ca" required>
+          <p class="error-message" id="email-error"></p>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Your password" required>
+          <p class="error-message" id="password-error"></p>
+        </div>
+
+        <button type="submit" class="btn">Log In</button>
+      </form>
+
+      <p class="auth-switch">
+        Don't have an account? <a href="register.html">Sign up</a>
+      </p>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <p>SOEN 287 · Smart Campus Event Planner · Summer 2026</p>
+  </footer>
+
+  <script src="../public/js/auth.js"></script>
+</body>
+</html>
