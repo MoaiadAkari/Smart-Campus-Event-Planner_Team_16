@@ -34,7 +34,9 @@ function showBanner(message, type) {
 
 function clearBanner() {
   const banner = document.getElementById("form-banner");
-  if (banner) banner.className = "form-banner";
+  if (!banner) return;
+  banner.textContent = "";
+  banner.className = "form-banner";
 }
 
 /* ---------- login page ---------- */
@@ -161,5 +163,101 @@ if (registerForm) {
     // Deliverable 2: POST this data to the Node.js backend instead.
     showBanner("Account created! Redirecting to login…", "success");
     setTimeout(() => (window.location.href = "login.html"), 1500);
+  });
+}
+
+/* ---------- forgot password page ---------- */
+
+const forgotPasswordForm = document.getElementById("forgot-password-form");
+if (forgotPasswordForm) {
+  forgotPasswordForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+    clearBanner();
+
+    const emailField = document.getElementById("email");
+    const submitButton = document.getElementById("forgot-submit");
+    const demoResetLink = document.getElementById("demo-reset-link");
+    const email = emailField.value.trim();
+
+    if (!email) {
+      setFieldError("email", "Email is required.");
+      emailField.focus();
+      return;
+    }
+
+    if (!EMAIL_REGEX.test(email)) {
+      setFieldError("email", "Please enter a valid email address.");
+      emailField.focus();
+      return;
+    }
+
+    setFieldError("email", "");
+
+    // Deliverable 1 only simulates sending the reset email.
+    // The generic message avoids revealing whether an account exists.
+    showBanner(
+      "If an account exists for this email, password reset instructions have been sent.",
+      "success"
+    );
+
+    submitButton.disabled = true;
+    submitButton.textContent = "Instructions Sent";
+    demoResetLink.hidden = false;
+    demoResetLink.focus();
+  });
+}
+
+/* ---------- reset password page ---------- */
+
+const resetPasswordForm = document.getElementById("reset-password-form");
+if (resetPasswordForm) {
+  resetPasswordForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+    clearBanner();
+
+    const passwordField = document.getElementById("new-password");
+    const confirmPasswordField = document.getElementById("confirm-password");
+    const submitButton = document.getElementById("reset-submit");
+    const password = passwordField.value;
+    const confirmPassword = confirmPasswordField.value;
+    let valid = true;
+
+    if (!password) {
+      setFieldError("new-password", "New password is required.");
+      valid = false;
+    } else if (password.length < MIN_PASSWORD_LENGTH) {
+      setFieldError(
+        "new-password",
+        `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`
+      );
+      valid = false;
+    } else {
+      setFieldError("new-password", "");
+    }
+
+    if (!confirmPassword) {
+      setFieldError("confirm-password", "Please confirm your new password.");
+      valid = false;
+    } else if (confirmPassword !== password) {
+      setFieldError("confirm-password", "Passwords do not match.");
+      valid = false;
+    } else {
+      setFieldError("confirm-password", "");
+    }
+
+    if (!valid) return;
+
+    // Deliverable 1 only simulates a successful password update.
+    // Deliverable 2 will validate a reset token and update the password server-side.
+    showBanner("Password updated! Redirecting to login…", "success");
+
+    submitButton.disabled = true;
+    submitButton.textContent = "Password Updated";
+    passwordField.disabled = true;
+    confirmPasswordField.disabled = true;
+
+    setTimeout(() => {
+      window.location.href = "login.html";
+    }, 1500);
   });
 }
