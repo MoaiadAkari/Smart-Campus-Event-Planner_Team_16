@@ -1,0 +1,55 @@
+/* ---- Navigation bar (shared across all pages) ---- */
+
+
+:root {
+  --primary: #912338;        /* Concordia maroon */
+  --primary-dark: #6e1a2a;
+  --primary-light: #b54d61;
+  --bg: #f6f4f5;
+  --surface: #ffffff;
+  --text: #1f2023;
+  --text-muted: #6b6f76;
+  --border: #dcd8da;
+  --error: #c62828;
+  --success: #2e7d32;
+  --radius: 10px;
+  --shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+
+.navbar {
+  background-color: var(--primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.5rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.navbar .brand {
+  color: #fff;
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.navbar .nav-links {
+  display: flex;
+  gap: 1rem;
+  list-style: none;
+  flex-wrap: wrap;
+}
+
+.navbar .nav-links a {
+  color: #fff;
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  text-decoration: none;
+}
+
+.navbar .nav-links a:hover,
+.navbar .nav-links a.active {
+  background-color: var(--primary-dark);
+}
