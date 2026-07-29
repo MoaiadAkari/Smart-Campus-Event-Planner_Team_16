@@ -1,5 +1,4 @@
-/* ---- Navigation bar (shared across all pages) ---- */
-
+/* ---- Navigation bar shared across all pages ---- */
 
 :root {
   --primary: #912338;        /* Concordia maroon */
@@ -17,45 +16,145 @@
 }
 
 
+/* Reset */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+/* Navigation bar */
+
 .navbar {
-  background-color: var(--primary);
-  color: #fff;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem 1.5rem;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.75rem;
+
+  width: 100%;
+  min-height: 64px;
+  padding: 0.75rem 1.5rem;
+
+  color: #ffffff;
+  background-color: var(--primary);
 }
 
+
+/* Website name */
+
 .navbar .brand {
-  color: #fff;
+  color: #ffffff;
   font-size: 1.15rem;
   font-weight: 700;
   text-decoration: none;
+  white-space: nowrap;
 }
+
+
+/* Navigation links container */
 
 .navbar .nav-links {
   display: flex;
-  gap: 1rem;
-  list-style: none;
+  align-items: center;
   flex-wrap: wrap;
+  gap: 0.75rem;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
 }
 
+
+/* Navigation links */
+
 .navbar .nav-links a {
-  color: #fff;
-  padding: 0.35rem 0.6rem;
-  border-radius: 6px;
+  display: inline-block;
+
+  padding: 0.45rem 0.7rem;
+
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 500;
   text-decoration: none;
+
+  border-radius: 6px;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
 }
+
+
+/* Hover and active page */
 
 .navbar .nav-links a:hover,
 .navbar .nav-links a.active {
   background-color: var(--primary-dark);
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
+.navbar .nav-links a:hover {
+  transform: translateY(-1px);
+}
+
+
+/* Logout link */
+
+#logout-link {
+  cursor: pointer;
+}
+
+
+/* Keyboard accessibility */
+
+.navbar .brand:focus-visible,
+.navbar .nav-links a:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 3px;
+}
+
+
+/* Tablet and mobile */
+
+@media (max-width: 700px) {
+  .navbar {
+    align-items: flex-start;
+    flex-direction: column;
+
+    padding: 1rem;
+  }
+
+  .navbar .nav-links {
+    width: 100%;
+    gap: 0.4rem;
+  }
+
+  .navbar .nav-links li {
+    flex: 1;
+  }
+
+  .navbar .nav-links a {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+
+/* Small mobile screens */
+
+@media (max-width: 450px) {
+  .navbar .brand {
+    white-space: normal;
+  }
+
+  .navbar .nav-links {
+    flex-direction: column;
+  }
+
+  .navbar .nav-links li {
+    width: 100%;
+  }
 }

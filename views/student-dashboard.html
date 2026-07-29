@@ -1,48 +1,275 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Student Dashboard</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <link rel="stylesheet" href="../public/css/components/header.css">
-    <link rel="stylesheet" href="../public/css/components/footer.css">
+    <title>Student Dashboard | Smart Campus</title>
 
+    <!-- Shared styles -->
+    <link rel="stylesheet" href="../public/css/header.css">
+    <link rel="stylesheet" href="../public/css/footer.css">
+    <link rel="stylesheet" href="../public/css/style.css">
 
-    <script src="../public/js/components.js" defer></script>
+    <!-- Dashboard styles -->
+    <link
+        rel="stylesheet"
+        href="../public/css/student-dashboard.css"
+    >
+
+    <!-- Shared header and footer -->
+    <script
+        src="../public/js/components.js"
+        defer
+    ></script>
+
+    <!-- Dashboard logic -->
+    <script
+        src="../public/js/student-dashboard.js"
+        defer
+    ></script>
 </head>
 
 <body>
-
+    <!-- Header inserted by components.js -->
     <div id="header-container"></div>
 
+    <main class="student-dashboard">
+        <!-- Welcome section -->
+        <section class="dashboard-welcome">
+            <div>
+                <p class="dashboard-label">Student Dashboard</p>
 
+                <h1 id="student-greeting">
+                    Welcome back!
+                </h1>
 
+                <p class="dashboard-description">
+                    Here is an overview of your campus event participation.
+                </p>
+            </div>
 
+            <div class="welcome-actions">
+                <a
+                    href="events.html"
+                    class="dashboard-button primary-button"
+                >
+                    Browse Events
+                </a>
 
+                <a
+                    href="my-registrations.html"
+                    class="dashboard-button secondary-button"
+                >
+                    My Registrations
+                </a>
+            </div>
+        </section>
 
-    <main>
-<!-- write your code here -->
+        <!-- Summary cards inserted by JavaScript -->
+        <section
+            id="summary-cards"
+            class="dashboard-summary"
+            aria-label="Event participation summary"
+        ></section>
 
-        <h1>Student Dashboard</h1>
-        <p>This is the student dashboard page.</p>
+        <!-- Participation and navigation -->
+        <section class="dashboard-information-grid">
+            <!-- Participation summary -->
+            <article class="dashboard-panel participation-panel">
+                <div class="panel-heading">
+                    <div>
+                        <p class="panel-label">Your Activity</p>
+                        <h2>Participation Summary</h2>
+                    </div>
+
+                    <span
+                        id="participation-percentage"
+                        class="participation-percentage"
+                    >
+                        0%
+                    </span>
+                </div>
+
+                <p id="participation-message">
+                    Your participation progress will appear here.
+                </p>
+
+                <div
+                    class="progress-container"
+                    role="progressbar"
+                    aria-label="Event participation progress"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    aria-valuenow="0"
+                >
+                    <div
+                        id="participation-progress"
+                        class="progress-bar"
+                    ></div>
+                </div>
+
+                <div
+                    id="category-breakdown"
+                    class="category-breakdown"
+                ></div>
+            </article>
+
+            <!-- Quick links -->
+            <article class="dashboard-panel quick-links-panel">
+                <div class="panel-heading">
+                    <div>
+                        <p class="panel-label">Navigation</p>
+                        <h2>Quick Links</h2>
+                    </div>
+                </div>
+
+                <nav
+                    class="quick-links"
+                    aria-label="Student dashboard navigation"
+                >
+                    <a
+                        href="events.html"
+                        class="quick-link"
+                    >
+                        <span class="quick-link-icon">🔍</span>
+
+                        <span>
+                            <strong>Browse Events</strong>
+                            <small>Discover campus activities</small>
+                        </span>
+                    </a>
+
+                    <a
+                        href="my-registrations.html"
+                        class="quick-link"
+                    >
+                        <span class="quick-link-icon">🎟️</span>
+
+                        <span>
+                            <strong>My Registrations</strong>
+                            <small>View your registered events</small>
+                        </span>
+                    </a>
+
+                    <a
+                        href="upcoming-events.html"
+                        class="quick-link"
+                    >
+                        <span class="quick-link-icon">📅</span>
+
+                        <span>
+                            <strong>Upcoming Events</strong>
+                            <small>Check your future schedule</small>
+                        </span>
+                    </a>
+
+                    <a
+                        href="student-profile.html"
+                        class="quick-link"
+                    >
+                        <span class="quick-link-icon">👤</span>
+
+                        <span>
+                            <strong>Student Profile</strong>
+                            <small>View your account information</small>
+                        </span>
+                    </a>
+                </nav>
+            </article>
+        </section>
+
+        <!-- Upcoming events preview -->
+        <section class="dashboard-panel events-section">
+            <div class="section-heading">
+                <div>
+                    <p class="panel-label">Your Schedule</p>
+                    <h2>Upcoming Events</h2>
+
+                    <p>
+                        Your next registered campus events.
+                    </p>
+                </div>
+
+                <a
+                    href="upcoming-events.html"
+                    class="section-link"
+                >
+                    View All
+                </a>
+            </div>
+
+            <div
+                id="upcoming-events-list"
+                class="event-preview-grid"
+            ></div>
+
+            <div
+                id="upcoming-empty-message"
+                class="empty-message hidden"
+            >
+                <span class="empty-message-icon">📭</span>
+
+                <h3>No upcoming registrations</h3>
+
+                <p>
+                    Browse available events and register for something new.
+                </p>
+
+                <a
+                    href="events.html"
+                    class="dashboard-button primary-button"
+                >
+                    Browse Events
+                </a>
+            </div>
+        </section>
+
+        <!-- Suggested events preview -->
+        <section class="dashboard-panel events-section">
+            <div class="section-heading">
+                <div>
+                    <p class="panel-label">Recommended for You</p>
+                    <h2>Suggested Events</h2>
+
+                    <p>
+                        Explore a few upcoming campus opportunities.
+                    </p>
+                </div>
+
+                <a
+                    href="events.html"
+                    class="section-link"
+                >
+                    Browse All
+                </a>
+            </div>
+
+            <div
+                id="suggested-events-list"
+                class="event-preview-grid"
+            ></div>
+
+            <div
+                id="suggested-empty-message"
+                class="empty-message hidden"
+            >
+                <span class="empty-message-icon">✅</span>
+
+                <h3>No additional suggestions</h3>
+
+                <p>
+                    You are already registered for all available events.
+                </p>
+            </div>
+        </section>
     </main>
 
-
-
-
-
-
-
-
-
+    <!-- Footer inserted by components.js -->
     <div id="footer-container"></div>
-
 </body>
-
-
-
-
 </html>
