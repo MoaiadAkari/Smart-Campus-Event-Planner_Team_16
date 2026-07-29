@@ -1,0 +1,150 @@
+/* ============================================================
+   about.css — About page styling
+   Smart Campus Event Planner · Team 16
+   ============================================================ */
+
+/* ---------- Main page ---------- */
+
+.about-page {
+    width: min(1100px, 92%);
+    margin: 0 auto;
+    padding: 3rem 0;
+    color: var(--text);
+}
+
+/* ---------- Hero section ---------- */
+
+.about-hero {
+    background: linear-gradient(
+        135deg,
+        var(--primary),
+        var(--primary-dark)
+    );
+    color: #ffffff;
+    text-align: center;
+    padding: 4rem 2rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+}
+
+.about-hero h1 {
+    margin: 0 0 1rem;
+    font-size: clamp(2rem, 5vw, 3rem);
+}
+
+.about-hero p {
+    max-width: 750px;
+    margin: 0 auto;
+    font-size: 1.1rem;
+    line-height: 1.7;
+}
+
+/* ---------- Information sections ---------- */
+
+.about-section {
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 5px solid var(--primary);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 1.75rem 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.about-section h2 {
+    color: var(--primary);
+    margin: 0 0 0.75rem;
+    font-size: 1.5rem;
+}
+
+.about-section p {
+    margin: 0;
+    color: var(--text-muted);
+    line-height: 1.7;
+}
+
+/* ---------- Contact section ---------- */
+
+.contact-section {
+    text-align: center;
+    border-left: 1px solid var(--border);
+    border-top: 5px solid var(--primary);
+    padding: 2.5rem 2rem;
+}
+
+.contact-section p {
+    max-width: 650px;
+    margin: 0 auto 1.25rem;
+}
+
+/* Email button */
+
+.contact-email {
+    display: inline-block;
+    background-color: var(--primary);
+    color: #ffffff;
+    padding: 0.8rem 1.4rem;
+    border: 2px solid var(--primary);
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+        background-color 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.contact-email:hover {
+    background-color: var(--primary-dark);
+    border-color: var(--primary-dark);
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 12px rgba(0, 0, 0, 0.15);
+}
+
+.contact-email:active {
+    transform: translateY(0);
+}
+
+.contact-email:focus-visible {
+    outline: 3px solid var(--primary-light);
+    outline-offset: 3px;
+}
+
+/* ---------- Responsive design ---------- */
+
+@media (max-width: 768px) {
+    .about-page {
+        padding: 2rem 0;
+    }
+
+    .about-hero {
+        padding: 3rem 1.25rem;
+    }
+
+    .about-section {
+        padding: 1.4rem;
+    }
+
+    .contact-email {
+        width: 100%;
+        max-width: 360px;
+        overflow-wrap: anywhere;
+    }
+}
+
+@media (max-width: 480px) {
+    .about-hero {
+        padding: 2.5rem 1rem;
+    }
+
+    .about-hero p {
+        font-size: 1rem;
+    }
+
+    .about-section h2 {
+        font-size: 1.3rem;
+    }
+}
