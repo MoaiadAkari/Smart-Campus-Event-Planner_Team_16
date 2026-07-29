@@ -1,0 +1,824 @@
+/*
+    Student Dashboard
+    Mock frontend data for Deliverable 1.
+
+    The mockEvents and mockRegistrations arrays will later be moved
+    into separate shared JavaScript files.
+*/
+
+
+/* --------------------------------------------------
+   Temporary logged-in student
+-------------------------------------------------- */
+
+const currentStudent = {
+    userId: 1,
+    fullName: "Supreme Leader",
+    email: "moaiad@example.com"
+};
+
+
+/* --------------------------------------------------
+   Date helper
+
+   This creates dates relative to today so the dashboard
+   continues showing upcoming and previous events.
+-------------------------------------------------- */
+
+function getDateFromToday(numberOfDays) {
+    const date = new Date();
+
+    date.setDate(date.getDate() + numberOfDays);
+
+    return date.toISOString().split("T")[0];
+}
+
+
+/* --------------------------------------------------
+   Temporary shared event data
+-------------------------------------------------- */
+
+const mockEvents = [
+    {
+        eventId: 1,
+        title: "Resume and Interview Workshop",
+        description:
+            "Learn how to improve your resume and prepare for interviews.",
+        category: "Career",
+        eventDate: getDateFromToday(2),
+        startTime: "13:00",
+        endTime: "15:00",
+        location: "Hall Building, Room H-535",
+        capacity: 40,
+        status: "Open",
+        organizerId: 101,
+        createdOn: getDateFromToday(-15)
+    },
+
+    {
+        eventId: 2,
+        title: "Introduction to Web Development",
+        description:
+            "A beginner-friendly workshop about HTML, CSS, and JavaScript.",
+        category: "Academic",
+        eventDate: getDateFromToday(5),
+        startTime: "10:00",
+        endTime: "12:00",
+        location: "EV Building, Room EV-2.260",
+        capacity: 35,
+        status: "Open",
+        organizerId: 102,
+        createdOn: getDateFromToday(-12)
+    },
+
+    {
+        eventId: 3,
+        title: "Campus Networking Evening",
+        description:
+            "Meet students, alumni, and campus organization representatives.",
+        category: "Networking",
+        eventDate: getDateFromToday(-10),
+        startTime: "17:00",
+        endTime: "19:00",
+        location: "John Molson Building",
+        capacity: 100,
+        status: "Completed",
+        organizerId: 103,
+        createdOn: getDateFromToday(-30)
+    },
+
+    {
+        eventId: 4,
+        title: "Outdoor Soccer Tournament",
+        description:
+            "Join students from different departments for a soccer tournament.",
+        category: "Sports",
+        eventDate: getDateFromToday(8),
+        startTime: "11:00",
+        endTime: "16:00",
+        location: "Loyola Campus Field",
+        capacity: 60,
+        status: "Cancelled",
+        organizerId: 104,
+        createdOn: getDateFromToday(-10)
+    },
+
+    {
+        eventId: 5,
+        title: "Student Club Fair",
+        description:
+            "Discover student clubs and learn how to become involved on campus.",
+        category: "Club Activity",
+        eventDate: getDateFromToday(4),
+        startTime: "12:00",
+        endTime: "16:00",
+        location: "Hall Building Atrium",
+        capacity: 150,
+        status: "Open",
+        organizerId: 105,
+        createdOn: getDateFromToday(-8)
+    },
+
+    {
+        eventId: 6,
+        title: "Guest Lecture on Artificial Intelligence",
+        description:
+            "A discussion about current developments in artificial intelligence.",
+        category: "Guest Lecture",
+        eventDate: getDateFromToday(7),
+        startTime: "18:00",
+        endTime: "20:00",
+        location: "MB Building, Room MB-1.210",
+        capacity: 80,
+        status: "Open",
+        organizerId: 106,
+        createdOn: getDateFromToday(-6)
+    },
+
+    {
+        eventId: 7,
+        title: "Community Volunteering Day",
+        description:
+            "Volunteer with other students to support a local community project.",
+        category: "Volunteering",
+        eventDate: getDateFromToday(12),
+        startTime: "09:00",
+        endTime: "14:00",
+        location: "Concordia Greenhouse",
+        capacity: 25,
+        status: "Full",
+        organizerId: 107,
+        createdOn: getDateFromToday(-5)
+    }
+];
+
+
+/* --------------------------------------------------
+   Temporary registration data
+-------------------------------------------------- */
+
+let mockRegistrations = [
+    {
+        registrationId: 1,
+        userId: 1,
+        eventId: 1,
+        registrationDate: getDateFromToday(-5),
+        status: "Registered",
+        attended: false
+    },
+
+    {
+        registrationId: 2,
+        userId: 1,
+        eventId: 2,
+        registrationDate: getDateFromToday(-4),
+        status: "Registered",
+        attended: false
+    },
+
+    {
+        registrationId: 3,
+        userId: 1,
+        eventId: 3,
+        registrationDate: getDateFromToday(-20),
+        status: "Attended",
+        attended: true
+    },
+
+    {
+        registrationId: 4,
+        userId: 1,
+        eventId: 4,
+        registrationDate: getDateFromToday(-7),
+        status: "Cancelled",
+        attended: false
+    }
+];
+
+
+/* --------------------------------------------------
+   DOM references
+-------------------------------------------------- */
+
+const studentGreeting =
+    document.querySelector("#student-greeting");
+
+const summaryCardsContainer =
+    document.querySelector("#summary-cards");
+
+const participationPercentage =
+    document.querySelector("#participation-percentage");
+
+const participationMessage =
+    document.querySelector("#participation-message");
+
+const participationProgress =
+    document.querySelector("#participation-progress");
+
+const progressContainer =
+    document.querySelector(".progress-container");
+
+const categoryBreakdown =
+    document.querySelector("#category-breakdown");
+
+const upcomingEventsList =
+    document.querySelector("#upcoming-events-list");
+
+const upcomingEmptyMessage =
+    document.querySelector("#upcoming-empty-message");
+
+const suggestedEventsList =
+    document.querySelector("#suggested-events-list");
+
+const suggestedEmptyMessage =
+    document.querySelector("#suggested-empty-message");
+
+
+/* --------------------------------------------------
+   General helper functions
+-------------------------------------------------- */
+
+function getEventDateTime(event) {
+    return new Date(
+        `${event.eventDate}T${event.startTime}:00`
+    );
+}
+
+
+function isUpcomingEvent(event) {
+    return getEventDateTime(event) > new Date();
+}
+
+
+function formatEventDate(dateString) {
+    const date = new Date(`${dateString}T00:00:00`);
+
+    return new Intl.DateTimeFormat("en-CA", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        year: "numeric"
+    }).format(date);
+}
+
+
+function formatTime(timeString) {
+    const [hours, minutes] = timeString
+        .split(":")
+        .map(Number);
+
+    const date = new Date();
+
+    date.setHours(hours, minutes, 0, 0);
+
+    return new Intl.DateTimeFormat("en-CA", {
+        hour: "numeric",
+        minute: "2-digit"
+    }).format(date);
+}
+
+
+function getStatusClass(status) {
+    return `status-${status
+        .toLowerCase()
+        .replaceAll(" ", "-")}`;
+}
+
+
+function findEventById(eventId) {
+    return mockEvents.find(
+        event => event.eventId === eventId
+    );
+}
+
+
+function getStudentRegistrations() {
+    return mockRegistrations.filter(
+        registration =>
+            registration.userId === currentStudent.userId
+    );
+}
+
+
+function studentIsRegisteredForEvent(eventId) {
+    return mockRegistrations.some(
+        registration =>
+            registration.userId === currentStudent.userId &&
+            registration.eventId === eventId &&
+            registration.status !== "Cancelled"
+    );
+}
+
+
+/* --------------------------------------------------
+   Greeting
+-------------------------------------------------- */
+
+function displayStudentGreeting() {
+    studentGreeting.textContent =
+        `Welcome back, ${currentStudent.fullName}!`;
+}
+
+
+/* --------------------------------------------------
+   Dashboard statistics
+-------------------------------------------------- */
+
+function calculateDashboardStatistics() {
+    const studentRegistrations =
+        getStudentRegistrations();
+
+    const activeRegistrations =
+        studentRegistrations.filter(
+            registration =>
+                registration.status === "Registered" ||
+                registration.status === "Attended"
+        );
+
+    const upcomingRegistrations =
+        studentRegistrations.filter(registration => {
+            if (registration.status !== "Registered") {
+                return false;
+            }
+
+            const event =
+                findEventById(registration.eventId);
+
+            return (
+                event &&
+                isUpcomingEvent(event) &&
+                event.status !== "Cancelled" &&
+                event.status !== "Disabled"
+            );
+        });
+
+    const attendedRegistrations =
+        studentRegistrations.filter(
+            registration =>
+                registration.status === "Attended" ||
+                registration.attended === true
+        );
+
+    const cancelledRegistrations =
+        studentRegistrations.filter(
+            registration =>
+                registration.status === "Cancelled"
+        );
+
+    return {
+        totalRegistered: activeRegistrations.length,
+        upcoming: upcomingRegistrations.length,
+        attended: attendedRegistrations.length,
+        cancelled: cancelledRegistrations.length
+    };
+}
+
+
+/* --------------------------------------------------
+   Summary cards
+-------------------------------------------------- */
+
+function displaySummaryCards() {
+    const statistics =
+        calculateDashboardStatistics();
+
+    const summaryCards = [
+        {
+            title: "Total Registered Events",
+            value: statistics.totalRegistered,
+            icon: "🎟️"
+        },
+        {
+            title: "Upcoming Events",
+            value: statistics.upcoming,
+            icon: "📅"
+        },
+        {
+            title: "Events Attended",
+            value: statistics.attended,
+            icon: "✅"
+        },
+        {
+            title: "Cancelled Registrations",
+            value: statistics.cancelled,
+            icon: "❌"
+        }
+    ];
+
+    summaryCardsContainer.innerHTML =
+        summaryCards
+            .map(createSummaryCard)
+            .join("");
+}
+
+
+function createSummaryCard(card) {
+    return `
+        <article class="summary-card">
+            <div
+                class="summary-icon"
+                aria-hidden="true"
+            >
+                ${card.icon}
+            </div>
+
+            <div class="summary-content">
+                <p>${card.title}</p>
+
+                <h2 class="summary-number">
+                    ${card.value}
+                </h2>
+            </div>
+        </article>
+    `;
+}
+
+
+/* --------------------------------------------------
+   Participation summary
+-------------------------------------------------- */
+
+function displayParticipationSummary() {
+    const statistics =
+        calculateDashboardStatistics();
+
+    const totalRegistered =
+        statistics.totalRegistered;
+
+    const attended =
+        statistics.attended;
+
+    const percentage =
+        totalRegistered === 0
+            ? 0
+            : Math.round(
+                (attended / totalRegistered) * 100
+            );
+
+    participationPercentage.textContent =
+        `${percentage}%`;
+
+    participationProgress.style.width =
+        `${percentage}%`;
+
+    progressContainer.setAttribute(
+        "aria-valuenow",
+        percentage
+    );
+
+    participationMessage.textContent =
+        totalRegistered === 0
+            ? "Register for an event to begin tracking your participation."
+            : `You have attended ${attended} of your ${totalRegistered} registered events.`;
+
+    displayCategoryBreakdown();
+}
+
+
+function displayCategoryBreakdown() {
+    const categoryTotals = {};
+
+    const activeRegistrations =
+        getStudentRegistrations().filter(
+            registration =>
+                registration.status === "Registered" ||
+                registration.status === "Attended"
+        );
+
+    activeRegistrations.forEach(registration => {
+        const event =
+            findEventById(registration.eventId);
+
+        if (!event) {
+            return;
+        }
+
+        const category = event.category;
+
+        categoryTotals[category] =
+            (categoryTotals[category] || 0) + 1;
+    });
+
+    const categories =
+        Object.entries(categoryTotals);
+
+    if (categories.length === 0) {
+        categoryBreakdown.innerHTML = `
+            <span class="category-item">
+                No category information available
+            </span>
+        `;
+
+        return;
+    }
+
+    categoryBreakdown.innerHTML =
+        categories
+            .map(([category, total]) => {
+                return `
+                    <span class="category-item">
+                        ${category}
+
+                        <strong>${total}</strong>
+                    </span>
+                `;
+            })
+            .join("");
+}
+
+
+/* --------------------------------------------------
+   Upcoming event preview
+-------------------------------------------------- */
+
+function getUpcomingRegisteredEvents() {
+    return getStudentRegistrations()
+        .filter(
+            registration =>
+                registration.status === "Registered"
+        )
+        .map(registration =>
+            findEventById(registration.eventId)
+        )
+        .filter(event => {
+            return (
+                event &&
+                isUpcomingEvent(event) &&
+                event.status !== "Cancelled" &&
+                event.status !== "Disabled"
+            );
+        })
+        .sort(
+            (eventA, eventB) =>
+                getEventDateTime(eventA) -
+                getEventDateTime(eventB)
+        )
+        .slice(0, 3);
+}
+
+
+function displayUpcomingEvents() {
+    const upcomingEvents =
+        getUpcomingRegisteredEvents();
+
+    if (upcomingEvents.length === 0) {
+        upcomingEventsList.innerHTML = "";
+        upcomingEmptyMessage.classList.remove("hidden");
+        return;
+    }
+
+    upcomingEmptyMessage.classList.add("hidden");
+
+    upcomingEventsList.innerHTML =
+        upcomingEvents
+            .map(event =>
+                createEventCard(event, "upcoming")
+            )
+            .join("");
+}
+
+
+/* --------------------------------------------------
+   Suggested event preview
+-------------------------------------------------- */
+
+function getSuggestedEvents() {
+    return mockEvents
+        .filter(event => {
+            return (
+                isUpcomingEvent(event) &&
+                event.status !== "Cancelled" &&
+                event.status !== "Disabled" &&
+                event.status !== "Completed" &&
+                !studentIsRegisteredForEvent(event.eventId)
+            );
+        })
+        .sort(
+            (eventA, eventB) =>
+                getEventDateTime(eventA) -
+                getEventDateTime(eventB)
+        )
+        .slice(0, 3);
+}
+
+
+function displaySuggestedEvents() {
+    const suggestedEvents =
+        getSuggestedEvents();
+
+    if (suggestedEvents.length === 0) {
+        suggestedEventsList.innerHTML = "";
+        suggestedEmptyMessage.classList.remove("hidden");
+        return;
+    }
+
+    suggestedEmptyMessage.classList.add("hidden");
+
+    suggestedEventsList.innerHTML =
+        suggestedEvents
+            .map(event =>
+                createEventCard(event, "suggested")
+            )
+            .join("");
+}
+
+
+/* --------------------------------------------------
+   Event card template
+-------------------------------------------------- */
+
+function createEventCard(event, eventType) {
+    const isSuggested =
+        eventType === "suggested";
+
+    const registrationDisabled =
+        event.status !== "Open";
+
+    let actionButtons = `
+        <a
+            href="event-details.html?id=${event.eventId}"
+            class="dashboard-button card-secondary-button"
+        >
+            View Details
+        </a>
+    `;
+
+    if (isSuggested) {
+        actionButtons += `
+            <button
+                type="button"
+                class="dashboard-button card-primary-button"
+                data-action="register"
+                data-event-id="${event.eventId}"
+                ${registrationDisabled ? "disabled" : ""}
+            >
+                ${
+                    registrationDisabled
+                        ? event.status
+                        : "Register"
+                }
+            </button>
+        `;
+    }
+
+    return `
+        <article class="event-card">
+            <div class="event-card-top">
+                <span class="event-category">
+                    ${event.category}
+                </span>
+
+                <span
+                    class="
+                        event-status
+                        ${getStatusClass(event.status)}
+                    "
+                >
+                    ${event.status}
+                </span>
+            </div>
+
+            <h3>${event.title}</h3>
+
+            <div class="event-information">
+                <p>
+                    <span
+                        class="event-information-icon"
+                        aria-hidden="true"
+                    >
+                        📅
+                    </span>
+
+                    <span>
+                        ${formatEventDate(event.eventDate)}
+                    </span>
+                </p>
+
+                <p>
+                    <span
+                        class="event-information-icon"
+                        aria-hidden="true"
+                    >
+                        🕐
+                    </span>
+
+                    <span>
+                        ${formatTime(event.startTime)}
+                        –
+                        ${formatTime(event.endTime)}
+                    </span>
+                </p>
+
+                <p>
+                    <span
+                        class="event-information-icon"
+                        aria-hidden="true"
+                    >
+                        📍
+                    </span>
+
+                    <span>${event.location}</span>
+                </p>
+            </div>
+
+            <div class="event-actions">
+                ${actionButtons}
+            </div>
+        </article>
+    `;
+}
+
+
+/* --------------------------------------------------
+   Temporary registration interaction
+-------------------------------------------------- */
+
+function registerForEvent(eventId) {
+    const event =
+        findEventById(eventId);
+
+    if (!event) {
+        window.alert("The selected event could not be found.");
+        return;
+    }
+
+    if (event.status !== "Open") {
+        window.alert(
+            "Registration is not available for this event."
+        );
+
+        return;
+    }
+
+    if (studentIsRegisteredForEvent(eventId)) {
+        window.alert(
+            "You are already registered for this event."
+        );
+
+        return;
+    }
+
+    const newRegistration = {
+        registrationId:
+            mockRegistrations.length + 1,
+        userId: currentStudent.userId,
+        eventId: eventId,
+        registrationDate:
+            new Date().toISOString().split("T")[0],
+        status: "Registered",
+        attended: false
+    };
+
+    mockRegistrations.push(newRegistration);
+
+    window.alert(
+        `You have registered for "${event.title}".`
+    );
+
+    refreshDashboard();
+}
+
+
+/* --------------------------------------------------
+   Event listeners
+-------------------------------------------------- */
+
+suggestedEventsList.addEventListener(
+    "click",
+    function (event) {
+        const registerButton =
+            event.target.closest(
+                '[data-action="register"]'
+            );
+
+        if (!registerButton) {
+            return;
+        }
+
+        const eventId =
+            Number(registerButton.dataset.eventId);
+
+        registerForEvent(eventId);
+    }
+);
+
+
+/* --------------------------------------------------
+   Render dashboard
+-------------------------------------------------- */
+
+function refreshDashboard() {
+    displaySummaryCards();
+    displayParticipationSummary();
+    displayUpcomingEvents();
+    displaySuggestedEvents();
+}
+
+
+function initializeDashboard() {
+    displayStudentGreeting();
+    refreshDashboard();
+}
+
+
+initializeDashboard();
