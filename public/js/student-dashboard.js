@@ -5,17 +5,51 @@
     The mockEvents and mockRegistrations arrays will later be moved
     into separate shared JavaScript files.
 */
+let currentStudent = null;
 
+document.addEventListener("DOMContentLoaded", function () {
+    const sessionUser = JSON.parse(
+        sessionStorage.getItem("currentUser")
+    );
 
-/* --------------------------------------------------
-   Temporary logged-in student
--------------------------------------------------- */
+    // No logged-in user
+    if (!sessionUser) {
+        window.location.href = "login.html";
+        return;
+    }
 
-const currentStudent = {
-    userId: 1,
-    fullName: "Supreme Leader",
-    email: "moaiad@example.com"
-};
+    // Prevent admins from accessing the student dashboard
+    if (sessionUser.role !== "student") {
+        window.location.href = "admin-dashboard.html";
+        return;
+    }
+
+    // Find the logged-in student inside users.js
+    currentStudent = USERS.find(
+        user => user.id === sessionUser.id
+    );
+
+    if (!currentStudent) {
+        sessionStorage.removeItem("currentUser");
+        window.location.href = "login.html";
+        return;
+    }
+
+    initializeDashboard();
+});
+
+function displayStudentInformation(student) {
+  const studentName = document.getElementById("student-name");
+  const studentEmail = document.getElementById("student-email");
+
+  if (studentName) {
+    studentName.textContent = student.fullName;
+  }
+
+  if (studentEmail) {
+    studentEmail.textContent = student.email;
+  }
+}
 
 
 /* --------------------------------------------------
@@ -295,7 +329,7 @@ function findEventById(eventId) {
 function getStudentRegistrations() {
     return mockRegistrations.filter(
         registration =>
-            registration.userId === currentStudent.userId
+            registration.userId === currentStudent.id
     );
 }
 
@@ -303,7 +337,7 @@ function getStudentRegistrations() {
 function studentIsRegisteredForEvent(eventId) {
     return mockRegistrations.some(
         registration =>
-            registration.userId === currentStudent.userId &&
+            registration.userId === currentStudent.id &&
             registration.eventId === eventId &&
             registration.status !== "Cancelled"
     );
@@ -759,12 +793,10 @@ function registerForEvent(eventId) {
     }
 
     const newRegistration = {
-        registrationId:
-            mockRegistrations.length + 1,
-        userId: currentStudent.userId,
+        registrationId: mockRegistrations.length + 1,
+        userId: currentStudent.id,
         eventId: eventId,
-        registrationDate:
-            new Date().toISOString().split("T")[0],
+        registrationDate: new Date().toISOString().split("T")[0],
         status: "Registered",
         attended: false
     };
@@ -819,6 +851,3 @@ function initializeDashboard() {
     displayStudentGreeting();
     refreshDashboard();
 }
-
-
-initializeDashboard();

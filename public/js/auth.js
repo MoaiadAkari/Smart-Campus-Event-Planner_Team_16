@@ -4,10 +4,7 @@
    ============================================================ */
 
 // ---- Hard-coded demo accounts (replaced by the database in Deliverable 2) ----
-const DEMO_USERS = [
-  { fullName: "Sam Student", email: "student@demo.com", password: "student123", role: "student" },
-  { fullName: "Alex Admin",  email: "admin@demo.com",   password: "admin1234",  role: "admin" }
-];
+// -+-+-++-+-+-+-+-+-+-+-+-+-+-+- this part was removed by moaiad and replaced with the new users.js file +-+-+-+-+-+-+-+-+-+-+-+--++-+-+-+
 
 const MIN_PASSWORD_LENGTH = 8;
 
@@ -72,7 +69,7 @@ if (loginForm) {
     if (!valid) return;
 
     // Check against hard-coded users (Deliverable 2: replaced by a server check)
-    const user = DEMO_USERS.find(
+    const user = USERS.find(
       (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
     );
 
@@ -83,6 +80,7 @@ if (loginForm) {
 
     // Remember who is logged in for the other pages
     sessionStorage.setItem("currentUser", JSON.stringify({
+      id: user.id,
       fullName: user.fullName,
       email: user.email,
       role: user.role
@@ -122,7 +120,7 @@ if (registerForm) {
     } else if (!EMAIL_REGEX.test(email)) {
       setFieldError("email", "Please enter a valid email address.");
       valid = false;
-    } else if (DEMO_USERS.some((u) => u.email.toLowerCase() === email.toLowerCase())) {
+    } else if (USERS.some((u) => u.email.toLowerCase() === email.toLowerCase())) {
       // Duplicate-email prevention (spec §7.1)
       setFieldError("email", "An account with this email already exists.");
       valid = false;
