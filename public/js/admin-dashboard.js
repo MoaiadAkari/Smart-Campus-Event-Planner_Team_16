@@ -52,51 +52,7 @@ function getDateFromToday(numberOfDays) {
    Temporary mock data
 -------------------------------------------------- */
 
-const mockAdminEvents = [
-    {
-        eventId: 1,
-        title: "Resume and Interview Workshop",
-        category: "Career",
-        eventDate: getDateFromToday(2),
-        startTime: "13:00",
-        location: "Hall Building, Room H-535",
-        capacity: 40,
-        status: "Open"
-    },
-
-    {
-        eventId: 2,
-        title: "Introduction to Web Development",
-        category: "Academic",
-        eventDate: getDateFromToday(5),
-        startTime: "10:00",
-        location: "EV Building, Room EV-2.260",
-        capacity: 35,
-        status: "Open"
-    },
-
-    {
-        eventId: 3,
-        title: "Campus Networking Evening",
-        category: "Networking",
-        eventDate: getDateFromToday(-10),
-        startTime: "17:00",
-        location: "John Molson Building",
-        capacity: 100,
-        status: "Completed"
-    },
-
-    {
-        eventId: 7,
-        title: "Community Volunteering Day",
-        category: "Volunteering",
-        eventDate: getDateFromToday(12),
-        startTime: "09:00",
-        location: "Concordia Greenhouse",
-        capacity: 4,
-        status: "Full"
-    }
-];
+const mockAdminEvents = getStoredEvents();
 
 
 const mockStudents = [
