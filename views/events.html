@@ -1,50 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Events</title>
-
-    <link rel="stylesheet" href="../public/css/components/header.css">
-    <link rel="stylesheet" href="../public/css/components/footer.css">
-
-
-    <script src="../public/js/components.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Events | Smart Campus Event Planner</title>
+  <link rel="stylesheet" href="../public/css/components/header.css">
+  <link rel="stylesheet" href="../public/css/components/footer.css">
+  <link rel="stylesheet" href="../public/css/style.css">
+  <link rel="stylesheet" href="../public/css/event-pages.css">
+  <script src="../public/js/components.js" defer></script>
+  <script src="../public/js/mock-events.js" defer></script>
+  <script src="../public/js/events.js" defer></script>
 </head>
-
 <body>
+  <div id="header-container"></div>
 
-    <div id="header-container"></div>
+  <main class="events-main">
+    <section class="events-header">
+      <p class="events-label">Campus Life</p>
+      <h1>Campus Events</h1>
+      <p>Browse upcoming events and find something that interests you.</p>
+    </section>
 
+    <section class="events-filters" aria-label="Event filters">
+      <label>
+        <span>Search</span>
+        <input id="events-search" type="search" placeholder="Search by title or location">
+      </label>
+      <label>
+        <span>Category</span>
+        <select id="events-category">
+          <option value="">All categories</option>
+        </select>
+      </label>
+      <label>
+        <span>Status</span>
+        <select id="events-status">
+          <option value="">All statuses</option>
+          <option value="Open">Open</option>
+          <option value="Full">Full</option>
+          <option value="Completed">Completed</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
+      </label>
+    </section>
 
+    <section id="events-grid" class="events-grid" aria-live="polite"></section>
+    <p id="events-empty" class="events-empty" hidden>No events match your filters.</p>
+  </main>
 
-
-
-
-    <main>
-<!-- write your code here -->
-
-        <h1>Events</h1>
-        <p>This is the events page.</p>
-
-        
-    </main>
-
-
-
-
-
-
-
-
-
-    <div id="footer-container"></div>
-
+  <div id="footer-container"></div>
 </body>
-
-
-
-
 </html>

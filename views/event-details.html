@@ -1,49 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Event Details</title>
-
-    <link rel="stylesheet" href="../public/css/components/header.css">
-    <link rel="stylesheet" href="../public/css/components/footer.css">
-
-
-    <script src="../public/js/components.js" defer></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Event Details | Smart Campus Event Planner</title>
+  <link rel="stylesheet" href="../public/css/components/header.css">
+  <link rel="stylesheet" href="../public/css/components/footer.css">
+  <link rel="stylesheet" href="../public/css/style.css">
+  <link rel="stylesheet" href="../public/css/event-pages.css">
+  <script src="../public/js/components.js" defer></script>
+  <script src="../public/js/mock-events.js" defer></script>
+  <script src="../public/js/event-details.js" defer></script>
 </head>
-
 <body>
+  <div id="header-container"></div>
 
-    <div id="header-container"></div>
-    
+  <main class="event-details-main">
+    <a href="events.html" class="back-link">← Back to Events</a>
 
+    <section id="event-details-card" class="event-details-card">
+      <div class="event-details-header">
+        <div>
+          <p class="event-details-category" id="event-category"></p>
+          <h1 id="event-title"></h1>
+          <p class="event-details-organizer" id="event-organizer"></p>
+        </div>
+        <span class="event-status-badge" id="event-status"></span>
+      </div>
 
+      <div class="event-information">
+        <div class="event-info-item">
+          <h2>Date</h2>
+          <p id="event-date"></p>
+        </div>
+        <div class="event-info-item">
+          <h2>Time</h2>
+          <p id="event-time"></p>
+        </div>
+        <div class="event-info-item">
+          <h2>Location</h2>
+          <p id="event-location"></p>
+        </div>
+        <div class="event-info-item">
+          <h2>Capacity</h2>
+          <p id="event-capacity"></p>
+        </div>
+      </div>
 
+      <div class="event-description">
+        <h2>About this event</h2>
+        <p id="event-description"></p>
+      </div>
 
+      <div class="event-registration">
+        <div>
+          <h2>Interested in this event?</h2>
+          <p id="registration-help">Register now to reserve your place.</p>
+        </div>
+        <button type="button" class="register-event-btn" id="register-button">Register</button>
+      </div>
 
+      <p id="registration-message" class="registration-message" role="status" aria-live="polite"></p>
+    </section>
 
-    <main>
-<!-- write your code here -->
+    <section id="event-not-found" class="event-not-found" hidden>
+      <h1>Event not found</h1>
+      <p>The requested event may have been removed.</p>
+      <a href="events.html" class="home-btn primary-btn">Browse Events</a>
+    </section>
+  </main>
 
-        <h1>Event Details</h1>
-        <p>This is the event details page.</p>
-    </main>
-
-
-
-
-
-
-
-
-
-    <div id="footer-container"></div>
-
+  <div id="footer-container"></div>
 </body>
-
-
-
-
 </html>
