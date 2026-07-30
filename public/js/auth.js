@@ -68,10 +68,17 @@ if (loginForm) {
 
     if (!valid) return;
 
-    // Check against hard-coded users (Deliverable 2: replaced by a server check)
-    const user = USERS.find(
-      (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
+    const passwordOverrides = JSON.parse(
+      localStorage.getItem("passwordOverrides") || "{}"
     );
+
+    const user = USERS.find((candidate) => {
+      const savedPassword = passwordOverrides[candidate.id] || candidate.password;
+      return (
+        candidate.email.toLowerCase() === email.toLowerCase() &&
+        savedPassword === password
+      );
+    });
 
     if (!user) {
       showBanner("Invalid email or password. Try student@demo.com / student123.", "error");
@@ -164,51 +171,71 @@ if (registerForm) {
   });
 }
 
-/* ---------- forgot password page ---------- */
-
 const forgotPasswordForm = document.getElementById("forgot-password-form");
 if (forgotPasswordForm) {
   forgotPasswordForm.addEventListener("submit", function (event) {
     event.preventDefault();
     clearBanner();
 
-    const emailField = document.getElementById("email");
-    const submitButton = document.getElementById("forgot-submit");
-    const demoResetLink = document.getElementById("demo-reset-link");
-    const email = emailField.value.trim();
+    const email = document.getElementById("email").value.trim();
+    const securityQuestion = document.getElementById("security-question").value;
+    const securityAnswer = document.getElementById("security-answer").value.trim();
+    let valid = true;
 
     if (!email) {
       setFieldError("email", "Email is required.");
-      emailField.focus();
-      return;
-    }
-
-    if (!EMAIL_REGEX.test(email)) {
+      valid = false;
+    } else if (!EMAIL_REGEX.test(email)) {
       setFieldError("email", "Please enter a valid email address.");
-      emailField.focus();
-      return;
+      valid = false;
+    } else {
+      setFieldError("email", "");
     }
 
-    setFieldError("email", "");
+    if (!securityQuestion) {
+      setFieldError("security-question", "Please select your security question.");
+      valid = false;
+    } else {
+      setFieldError("security-question", "");
+    }
 
-    // Deliverable 1 only simulates sending the reset email.
-    // The generic message avoids revealing whether an account exists.
-    showBanner(
-      "If an account exists for this email, password reset instructions have been sent.",
-      "success"
+    if (!securityAnswer) {
+      setFieldError("security-answer", "Security answer is required.");
+      valid = false;
+    } else {
+      setFieldError("security-answer", "");
+    }
+
+    if (!valid) return;
+
+    const user = USERS.find(
+      candidate =>
+        candidate.email.toLowerCase() === email.toLowerCase() &&
+        candidate.securityQuestion === securityQuestion &&
+        candidate.securityAnswer.toLowerCase() === securityAnswer.toLowerCase()
     );
 
-    submitButton.disabled = true;
-    submitButton.textContent = "Instructions Sent";
-    demoResetLink.hidden = false;
-    demoResetLink.focus();
+    if (!user) {
+      showBanner("The email, question, or answer is incorrect.", "error");
+      return;
+    }
+
+    sessionStorage.setItem("passwordResetUserId", String(user.id));
+    showBanner("Account verified. Opening the password form…", "success");
+    setTimeout(() => {
+      window.location.href = "reset-password.html";
+    }, 800);
   });
 }
 
-/* ---------- reset password page ---------- */
-
 const resetPasswordForm = document.getElementById("reset-password-form");
 if (resetPasswordForm) {
+  const passwordResetUserId = sessionStorage.getItem("passwordResetUserId");
+
+  if (!passwordResetUserId) {
+    window.location.href = "forgot-password.html";
+  }
+
   resetPasswordForm.addEventListener("submit", function (event) {
     event.preventDefault();
     clearBanner();
@@ -245,14 +272,20 @@ if (resetPasswordForm) {
 
     if (!valid) return;
 
-    // Deliverable 1 only simulates a successful password update.
-    // Deliverable 2 will validate a reset token and update the password server-side.
+    const passwordOverrides = JSON.parse(
+      localStorage.getItem("passwordOverrides") || "{}"
+    );
+
+    passwordOverrides[passwordResetUserId] = password;
+    localStorage.setItem("passwordOverrides", JSON.stringify(passwordOverrides));
+
     showBanner("Password updated! Redirecting to login…", "success");
 
     submitButton.disabled = true;
     submitButton.textContent = "Password Updated";
     passwordField.disabled = true;
     confirmPasswordField.disabled = true;
+    sessionStorage.removeItem("passwordResetUserId");
 
     setTimeout(() => {
       window.location.href = "login.html";
