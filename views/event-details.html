@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Event Details - Smart Campus Event Planner</title>
+
+    <link rel="stylesheet" href="../public/css/style.css">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <a href="index.html" class="brand">Smart Campus Event Planner</a>
+
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="events.html" class="active">Events</a></li>
+            <li><a href="student-dashboard.html">Dashboard</a></li>
+            <li><a href="my-registrations.html">My Registrations</a></li>
+        </ul>
+    </nav>
+
+    <main class="event-details-main">
+
+        <a href="events.html" class="back-link">← Back to Events</a>
+
+        <section class="event-details-card">
+
+            <div class="event-details-header">
+
+                <div>
+                    <p class="event-details-category" id="event-category"></p>
+
+                    <h1 id="event-title"></h1>
+
+                    <p class="event-details-organizer" id="event-organizer"></p>
+                </div>
+
+                <span class="event-status open" id="event-status"></span>
+
+            </div>
+
+            <div class="event-information">
+
+                <div class="event-info-item">
+                    <h3>Date</h3>
+                    <p id="event-date"></p>
+                </div>
+
+                <div class="event-info-item">
+                    <h3>Time</h3>
+                    <p id="event-time"></p>
+                </div>
+
+                <div class="event-info-item">
+                    <h3>Location</h3>
+                    <p id="event-location"></p>
+                </div>
+
+                <div class="event-info-item">
+                    <h3>Capacity</h3>
+                    <p id="event-capacity"></p>
+                </div>
+
+            </div>
+
+            <div class="event-description">
+
+                <h2>About this event</h2>
+
+                <p id="event-description"></p>
+
+            </div>
+
+            <div class="event-registration">
+
+                <div>
+                    <h2>Interested in this event?</h2>
+                    <p>Register now to reserve your place.</p>
+                </div>
+
+                <button type="button"
+                        class="register-event-btn"
+                        id="register-button">
+                    Register
+                </button>
+
+            </div>
+
+            <p id="registration-message" class="registration-message"></p>
+
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 Smart Campus Event Planner</p>
+    </footer>
+
+    <script src="../public/js/mockEvents.js"></script>
+    <script src="../public/js/event-details.js"></script>
+
+</body>
+
+</html>

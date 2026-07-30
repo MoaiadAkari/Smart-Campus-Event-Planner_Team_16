@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Events - Smart Campus Event Planner</title>
+
+    <link rel="stylesheet" href="../public/css/style.css">
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <a href="index.html" class="brand">Smart Campus Event Planner</a>
+
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="events.html" class="active">Events</a></li>
+            <li><a href="student-dashboard.html">Dashboard</a></li>
+            <li><a href="my-registrations.html">My Registrations</a></li>
+        </ul>
+    </nav>
+
+    <main class="events-main">
+
+        <section class="events-header">
+            <h1>Campus Events</h1>
+            <p>Browse upcoming events and find something that interests you.</p>
+        </section>
+
+        <section class="events-filters">
+
+            <input type="text" placeholder="Search events...">
+
+            <select>
+                <option>All Categories</option>
+                <option>Career</option>
+                <option>Academic</option>
+                <option>Social</option>
+            </select>
+
+            <select>
+                <option>All Locations</option>
+                <option>Hall Building</option>
+                <option>Webster Library</option>
+                <option>EV Building</option>
+            </select>
+
+        </section>
+
+        <section class="events-grid">
+
+            <article class="event-card">
+                <p class="event-category">Career</p>
+                <h2>Tech Career Workshop</h2>
+                <p>August 5, 2026</p>
+                <p>Hall Building</p>
+                <p>Status: Open</p>
+
+                <a href="event-details.html?id=1" class="event-card-link">
+                    View Details
+                </a>
+            </article>
+
+            <article class="event-card">
+                <p class="event-category">Academic</p>
+                <h2>Study Skills Workshop</h2>
+                <p>August 8, 2026</p>
+                <p>Webster Library</p>
+                <p>Status: Open</p>
+
+                <a href="event-details.html?id=2" class="event-card-link">
+                    View Details
+                </a>
+            </article>
+
+            <article class="event-card">
+                <p class="event-category">Social</p>
+                <h2>Campus Welcome Night</h2>
+                <p>August 12, 2026</p>
+                <p>EV Building</p>
+                <p>Status: Open</p>
+
+                <a href="event-details.html?id=3" class="event-card-link">
+                    View Details
+                </a>
+            </article>
+
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2026 Smart Campus Event Planner</p>
+    </footer>
+
+</body>
+
+</html>
