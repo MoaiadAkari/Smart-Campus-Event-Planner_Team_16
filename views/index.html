@@ -1,139 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Campus Event Planner</title>
-    <link rel="stylesheet" href="../public/css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Campus Event Planner</title>
+  <link rel="stylesheet" href="../public/css/components/header.css">
+  <link rel="stylesheet" href="../public/css/components/footer.css">
+  <link rel="stylesheet" href="../public/css/style.css">
+  <link rel="stylesheet" href="../public/css/event-pages.css">
+  <script src="../public/js/components.js" defer></script>
+  <script src="../public/js/mock-events.js" defer></script>
+  <script src="../public/js/home-events.js" defer></script>
 </head>
-
 <body>
+  <div id="header-container"></div>
 
-    <nav class="navbar">
-        <a href="index.html" class="brand">Smart Campus Event Planner</a>
-
-        <ul class="nav-links">
-            <li><a href="index.html" class="active">Home</a></li>
-            <li><a href="event-details.html">Events</a></li>
-            <li><a href="student-dashboard.html">About</a></li>
-            <li><a href="contact.html">Contact</a></li>
-            <li><a href="login.html">Login</a></li>
-            <li><a href="register.html">Register</a></li>
-        </ul>
-    </nav>
-
-    <main>
-
-        <section class="hero">
-            <div class="hero-content">
-                <p class="hero-label">Your Campus. Your Events. Your Community.</p>
-
-                <h1>Discover. Join. Connect.</h1>
-
-                <p class="hero-description">
-                    Discover campus events, connect with your community,
-                    and make the most of campus life.
-                </p>
-
-                <div class="hero-buttons">
-                    <a href="events.html" class="home-btn primary-btn">Browse Events</a>
-                    <a href="#features" class="home-btn secondary-btn">Learn More</a>
-                </div>
-            </div>
-        </section>
-
-        <section class="features" id="features">
-
-            <h2>Everything happening on campus, in one place.</h2>
-
-            <p class="section-description">
-                Find activities that interest you and keep track of your campus events.
-            </p>
-
-            <div class="feature-grid">
-
-                <article class="feature-card">
-                    <h3>Discover Events</h3>
-                    <p>
-                        Browse workshops, club activities, career events,
-                        sports and other events happening on campus.
-                    </p>
-                </article>
-
-                <article class="feature-card">
-                    <h3>Register Easily</h3>
-                    <p>
-                        View event information and register for available
-                        events that interest you.
-                    </p>
-                </article>
-
-                <article class="feature-card">
-                    <h3>Stay Organized</h3>
-                    <p>
-                        Keep track of your registered and upcoming events
-                        from your student dashboard.
-                    </p>
-                </article>
-
-            </div>
-
-        </section>
-
-        
-        <section class="featured-events">
-
-    <div class="featured-header">
-        <div>
-            <h2>Upcoming Campus Events</h2>
-            <p>Discover some of the activities happening around campus.</p>
+  <main>
+    <section class="hero">
+      <div class="hero-content">
+        <p class="hero-label">Your Campus. Your Events. Your Community.</p>
+        <h1>Discover. Join. Connect.</h1>
+        <p class="hero-description">
+          Discover campus events, connect with your community, and make the most of campus life.
+        </p>
+        <div class="hero-buttons">
+          <a href="events.html" class="home-btn primary-btn">Browse Events</a>
+          <a href="#features" class="home-btn secondary-btn">Learn More</a>
         </div>
+      </div>
+    </section>
 
+    <section class="features" id="features">
+      <h2>Everything happening on campus, in one place.</h2>
+      <p class="section-description">
+        Find activities that interest you and keep track of your campus events.
+      </p>
+      <div class="feature-grid">
+        <article class="feature-card">
+          <h3>Discover Events</h3>
+          <p>Browse workshops, club activities, career events, sports, and other campus activities.</p>
+        </article>
+        <article class="feature-card">
+          <h3>Register Easily</h3>
+          <p>View event information and register for available events that interest you.</p>
+        </article>
+        <article class="feature-card">
+          <h3>Stay Organized</h3>
+          <p>Keep track of registered and upcoming events from your student dashboard.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="featured-events">
+      <div class="featured-header">
+        <div>
+          <h2>Upcoming Campus Events</h2>
+          <p>Discover some of the activities happening around campus.</p>
+        </div>
         <a href="events.html">View All Events →</a>
-    </div>
+      </div>
+      <div id="home-event-grid" class="home-event-grid"></div>
+    </section>
 
-    <div class="home-event-grid">
+    <section class="home-cta">
+      <h2>Ready to explore your campus?</h2>
+      <p>Find your next event and get involved.</p>
+      <a href="events.html" class="home-btn primary-btn">Explore Events</a>
+    </section>
+  </main>
 
-        <article class="home-event-card">
-            <p class="event-category">Career</p>
-            <h3>Tech Career Workshop</h3>
-            <p>August 5, 2026</p>
-            <p>Hall Building</p>
-            <a href="event-details.html?id=1">View Details</a>
-        </article>
-
-        <article class="home-event-card">
-            <p class="event-category">Academic</p>
-            <h3>Study Skills Workshop</h3>
-            <p>August 8, 2026</p>
-            <p>Webster Library</p>
-            <a href="event-details.html?id=2">View Details</a>
-        </article>
-
-        <article class="home-event-card">
-            <p class="event-category">Social</p>
-            <h3>Campus Welcome Night</h3>
-            <p>August 12, 2026</p>
-            <p>EV Building</p>
-            <a href="event-details.html?id=3">View Details</a>
-        </article>
-
-    </div>
-
-</section>
-<section class="home-cta">
-            <h2>Ready to explore your campus?</h2>
-            <p>Find your next event and get involved.</p>
-            <a href="events.html" class="home-btn primary-btn">Explore Events</a>
-        </section>
-
-    </main>
-
-    <footer class="footer">
-        <p>&copy; 2026 Smart Campus Event Planner</p>
-    </footer>
-
+  <div id="footer-container"></div>
 </body>
-
 </html>

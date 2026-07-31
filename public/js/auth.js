@@ -4,10 +4,7 @@
    ============================================================ */
 
 // ---- Hard-coded demo accounts (replaced by the database in Deliverable 2) ----
-const DEMO_USERS = [
-  { fullName: "Sam Student", email: "student@demo.com", password: "student123", role: "student" },
-  { fullName: "Alex Admin",  email: "admin@demo.com",   password: "admin1234",  role: "admin" }
-];
+// -+-+-++-+-+-+-+-+-+-+-+-+-+-+- this part was removed by moaiad and replaced with the new users.js file +-+-+-+-+-+-+-+-+-+-+-+--++-+-+-+
 
 const MIN_PASSWORD_LENGTH = 8;
 
@@ -34,7 +31,9 @@ function showBanner(message, type) {
 
 function clearBanner() {
   const banner = document.getElementById("form-banner");
-  if (banner) banner.className = "form-banner";
+  if (!banner) return;
+  banner.textContent = "";
+  banner.className = "form-banner";
 }
 
 /* ---------- login page ---------- */
@@ -69,10 +68,17 @@ if (loginForm) {
 
     if (!valid) return;
 
-    // Check against hard-coded users (Deliverable 2: replaced by a server check)
-    const user = DEMO_USERS.find(
-      (u) => u.email.toLowerCase() === email.toLowerCase() && u.password === password
+    const passwordOverrides = JSON.parse(
+      localStorage.getItem("passwordOverrides") || "{}"
     );
+
+    const user = USERS.find((candidate) => {
+      const savedPassword = passwordOverrides[candidate.id] || candidate.password;
+      return (
+        candidate.email.toLowerCase() === email.toLowerCase() &&
+        savedPassword === password
+      );
+    });
 
     if (!user) {
       showBanner("Invalid email or password. Try student@demo.com / student123.", "error");
@@ -81,6 +87,7 @@ if (loginForm) {
 
     // Remember who is logged in for the other pages
     sessionStorage.setItem("currentUser", JSON.stringify({
+      id: user.id,
       fullName: user.fullName,
       email: user.email,
       role: user.role
@@ -120,7 +127,7 @@ if (registerForm) {
     } else if (!EMAIL_REGEX.test(email)) {
       setFieldError("email", "Please enter a valid email address.");
       valid = false;
-    } else if (DEMO_USERS.some((u) => u.email.toLowerCase() === email.toLowerCase())) {
+    } else if (USERS.some((u) => u.email.toLowerCase() === email.toLowerCase())) {
       // Duplicate-email prevention (spec §7.1)
       setFieldError("email", "An account with this email already exists.");
       valid = false;
@@ -161,5 +168,127 @@ if (registerForm) {
     // Deliverable 2: POST this data to the Node.js backend instead.
     showBanner("Account created! Redirecting to login…", "success");
     setTimeout(() => (window.location.href = "login.html"), 1500);
+  });
+}
+
+const forgotPasswordForm = document.getElementById("forgot-password-form");
+if (forgotPasswordForm) {
+  forgotPasswordForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+    clearBanner();
+
+    const email = document.getElementById("email").value.trim();
+    const securityQuestion = document.getElementById("security-question").value;
+    const securityAnswer = document.getElementById("security-answer").value.trim();
+    let valid = true;
+
+    if (!email) {
+      setFieldError("email", "Email is required.");
+      valid = false;
+    } else if (!EMAIL_REGEX.test(email)) {
+      setFieldError("email", "Please enter a valid email address.");
+      valid = false;
+    } else {
+      setFieldError("email", "");
+    }
+
+    if (!securityQuestion) {
+      setFieldError("security-question", "Please select your security question.");
+      valid = false;
+    } else {
+      setFieldError("security-question", "");
+    }
+
+    if (!securityAnswer) {
+      setFieldError("security-answer", "Security answer is required.");
+      valid = false;
+    } else {
+      setFieldError("security-answer", "");
+    }
+
+    if (!valid) return;
+
+    const user = USERS.find(
+      candidate =>
+        candidate.email.toLowerCase() === email.toLowerCase() &&
+        candidate.securityQuestion === securityQuestion &&
+        candidate.securityAnswer.toLowerCase() === securityAnswer.toLowerCase()
+    );
+
+    if (!user) {
+      showBanner("The email, question, or answer is incorrect.", "error");
+      return;
+    }
+
+    sessionStorage.setItem("passwordResetUserId", String(user.id));
+    showBanner("Account verified. Opening the password form…", "success");
+    setTimeout(() => {
+      window.location.href = "reset-password.html";
+    }, 800);
+  });
+}
+
+const resetPasswordForm = document.getElementById("reset-password-form");
+if (resetPasswordForm) {
+  const passwordResetUserId = sessionStorage.getItem("passwordResetUserId");
+
+  if (!passwordResetUserId) {
+    window.location.href = "forgot-password.html";
+  }
+
+  resetPasswordForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+    clearBanner();
+
+    const passwordField = document.getElementById("new-password");
+    const confirmPasswordField = document.getElementById("confirm-password");
+    const submitButton = document.getElementById("reset-submit");
+    const password = passwordField.value;
+    const confirmPassword = confirmPasswordField.value;
+    let valid = true;
+
+    if (!password) {
+      setFieldError("new-password", "New password is required.");
+      valid = false;
+    } else if (password.length < MIN_PASSWORD_LENGTH) {
+      setFieldError(
+        "new-password",
+        `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`
+      );
+      valid = false;
+    } else {
+      setFieldError("new-password", "");
+    }
+
+    if (!confirmPassword) {
+      setFieldError("confirm-password", "Please confirm your new password.");
+      valid = false;
+    } else if (confirmPassword !== password) {
+      setFieldError("confirm-password", "Passwords do not match.");
+      valid = false;
+    } else {
+      setFieldError("confirm-password", "");
+    }
+
+    if (!valid) return;
+
+    const passwordOverrides = JSON.parse(
+      localStorage.getItem("passwordOverrides") || "{}"
+    );
+
+    passwordOverrides[passwordResetUserId] = password;
+    localStorage.setItem("passwordOverrides", JSON.stringify(passwordOverrides));
+
+    showBanner("Password updated! Redirecting to login…", "success");
+
+    submitButton.disabled = true;
+    submitButton.textContent = "Password Updated";
+    passwordField.disabled = true;
+    confirmPasswordField.disabled = true;
+    sessionStorage.removeItem("passwordResetUserId");
+
+    setTimeout(() => {
+      window.location.href = "login.html";
+    }, 1500);
   });
 }

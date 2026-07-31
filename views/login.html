@@ -5,19 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login · Smart Campus Event Planner</title>
   <link rel="stylesheet" href="../public/css/style.css">
+
+    <link rel="stylesheet" href="../public/css/components/header.css">
+    <link rel="stylesheet" href="../public/css/components/footer.css">
+    <script src="../public/js/components.js" defer></script>
+
+    <script src="../public/js/users.js" defer></script>
+    <script src="../public/js/auth.js" defer></script>
+
 </head>
 <body>
 
-  <!-- Shared navigation bar -->
-  <nav class="navbar">
-    <a class="brand" href="index.html">Smart Campus Event Planner</a>
-    <ul class="nav-links">
-      <li><a href="index.html">Home</a></li>
-      <li><a href="contact.html">About / Contact</a></li>
-      <li><a href="login.html" class="active">Login</a></li>
-      <li><a href="register.html">Sign Up</a></li>
-    </ul>
-  </nav>
+ <div id="header-container"></div>  
 
   <main class="auth-main">
     <div class="auth-card">
@@ -41,6 +40,10 @@
           <p class="error-message" id="password-error"></p>
         </div>
 
+        <p class="forgot-password">
+          <a href="forgot-password.html">Forgot password?</a>
+        </p>
+
         <button type="submit" class="btn">Log In</button>
       </form>
 
@@ -50,10 +53,6 @@
     </div>
   </main>
 
-  <footer class="footer">
-    <p>SOEN 287 · Smart Campus Event Planner · Summer 2026</p>
-  </footer>
-
-  <script src="../public/js/auth.js"></script>
+  <div id="footer-container"></div>
 </body>
 </html>

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Admin Dashboard | Smart Campus</title>
+
+    <link rel="stylesheet" href="../public/css/components/header.css">
+    <link rel="stylesheet" href="../public/css/components/footer.css">
+    <link rel="stylesheet" href="../public/css/style.css">
+    <link rel="stylesheet" href="../public/css/student-dashboard.css">
+    <link rel="stylesheet" href="../public/css/admin-dashboard.css">
+
+    <script src="../public/js/components.js" defer></script>
+    <script src="../public/js/users.js" defer></script>
+    <script src="../public/js/mock-events.js" defer></script>
+    <script src="../public/js/admin-dashboard.js" defer></script>
+</head>
+
+<body>
+    <!-- Header inserted by components.js -->
+    <div id="header-container"></div>
+
+    <main class="student-dashboard admin-dashboard">
+        <!-- Welcome section -->
+        <section class="dashboard-welcome">
+            <div>
+                <p class="dashboard-label">Admin Dashboard</p>
+
+                <h1 id="admin-greeting">
+                    Welcome back!
+                </h1>
+
+                <p class="dashboard-description">
+                    Manage event registrations, attendance, and statistics.
+                </p>
+            </div>
+
+            <div class="welcome-actions">
+                <a
+                    href="create-event.html"
+                    class="dashboard-button primary-button"
+                >
+                    Create Event
+                </a>
+
+                <a
+                    href="manage-events.html"
+                    class="dashboard-button secondary-button"
+                >
+                    Manage Events
+                </a>
+            </div>
+        </section>
+
+        <!-- Summary cards inserted by JavaScript -->
+        <section
+            id="admin-summary-cards"
+            class="dashboard-summary"
+            aria-label="Event statistics summary"
+        ></section>
+
+        <!-- Registrations by category -->
+        <section class="dashboard-panel">
+            <div class="panel-heading">
+                <div>
+                    <p class="panel-label">Statistics</p>
+                    <h2>Registrations by Category</h2>
+                </div>
+
+                <span
+                    id="popular-category"
+                    class="popular-category-badge"
+                >
+                    —
+                </span>
+            </div>
+
+            <p class="panel-note">
+                Active registrations per event category. The most
+                popular category is highlighted above.
+            </p>
+
+            <div
+                id="category-statistics"
+                class="category-statistics"
+            ></div>
+        </section>
+
+        <!-- Per-event registrations and attendance -->
+        <section class="events-admin-section">
+            <div class="section-heading">
+                <div>
+                    <p class="panel-label">Event Management</p>
+                    <h2>Registrations &amp; Attendance</h2>
+
+                    <p>
+                        Registered students, capacity, and attendance
+                        for each event.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Event panels inserted by JavaScript -->
+            <div id="event-panels"></div>
+        </section>
+    </main>
+
+    <!-- Footer inserted by components.js -->
+    <div id="footer-container"></div>
+</body>
+</html>

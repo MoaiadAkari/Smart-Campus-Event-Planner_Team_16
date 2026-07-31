@@ -1,0 +1,160 @@
+/* ---- Navigation bar shared across all pages ---- */
+
+:root {
+  --primary: #912338;        /* Concordia maroon */
+  --primary-dark: #6e1a2a;
+  --primary-light: #b54d61;
+  --bg: #f6f4f5;
+  --surface: #ffffff;
+  --text: #1f2023;
+  --text-muted: #6b6f76;
+  --border: #dcd8da;
+  --error: #c62828;
+  --success: #2e7d32;
+  --radius: 10px;
+  --shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+
+/* Reset */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+/* Navigation bar */
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+
+  width: 100%;
+  min-height: 64px;
+  padding: 0.75rem 1.5rem;
+
+  color: #ffffff;
+  background-color: var(--primary);
+}
+
+
+/* Website name */
+
+.navbar .brand {
+  color: #ffffff;
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+
+/* Navigation links container */
+
+.navbar .nav-links {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+
+  margin: 0;
+  padding: 0;
+
+  list-style: none;
+}
+
+
+/* Navigation links */
+
+.navbar .nav-links a {
+  display: inline-block;
+
+  padding: 0.45rem 0.7rem;
+
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 500;
+  text-decoration: none;
+
+  border-radius: 6px;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+/* Hover and active page */
+
+.navbar .nav-links a:hover,
+.navbar .nav-links a.active {
+  background-color: var(--primary-dark);
+}
+
+.navbar .nav-links a:hover {
+  transform: translateY(-1px);
+}
+
+
+/* Logout link */
+
+#logout-link {
+  cursor: pointer;
+}
+
+
+/* Keyboard accessibility */
+
+.navbar .brand:focus-visible,
+.navbar .nav-links a:focus-visible {
+  outline: 3px solid #ffffff;
+  outline-offset: 3px;
+}
+
+
+/* Tablet and mobile */
+
+@media (max-width: 700px) {
+  .navbar {
+    align-items: flex-start;
+    flex-direction: column;
+
+    padding: 1rem;
+  }
+
+  .navbar .nav-links {
+    width: 100%;
+    gap: 0.4rem;
+  }
+
+  .navbar .nav-links li {
+    flex: 1;
+  }
+
+  .navbar .nav-links a {
+    width: 100%;
+    text-align: center;
+  }
+}
+
+
+/* Small mobile screens */
+
+@media (max-width: 450px) {
+  .navbar .brand {
+    white-space: normal;
+  }
+
+  .navbar .nav-links {
+    flex-direction: column;
+  }
+
+  .navbar .nav-links li {
+    width: 100%;
+  }
+}

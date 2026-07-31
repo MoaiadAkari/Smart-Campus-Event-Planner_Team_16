@@ -1,0 +1,22 @@
+:root {
+  --primary: #912338;        /* Concordia maroon */
+  --primary-dark: #6e1a2a;
+  --primary-light: #b54d61;
+  --bg: #f6f4f5;
+  --surface: #ffffff;
+  --text: #1f2023;
+  --text-muted: #6b6f76;
+  --border: #dcd8da;
+  --error: #c62828;
+  --success: #2e7d32;
+  --radius: 10px;
+  --shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* ---- Footer ---- */
+.footer {
+  text-align: center;
+  padding: 1rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}

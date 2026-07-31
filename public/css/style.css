@@ -44,44 +44,6 @@ a:hover {
   text-decoration: underline;
 }
 
-/* ---- Navigation bar (shared across all pages) ---- */
-.navbar {
-  background-color: var(--primary);
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.75rem 1.5rem;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.navbar .brand {
-  color: #fff;
-  font-size: 1.15rem;
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.navbar .nav-links {
-  display: flex;
-  gap: 1rem;
-  list-style: none;
-  flex-wrap: wrap;
-}
-
-.navbar .nav-links a {
-  color: #fff;
-  padding: 0.35rem 0.6rem;
-  border-radius: 6px;
-  text-decoration: none;
-}
-
-.navbar .nav-links a:hover,
-.navbar .nav-links a.active {
-  background-color: var(--primary-dark);
-}
-
 /* ---- Auth pages (login / register) ---- */
 .auth-main {
   flex: 1;
@@ -201,19 +163,35 @@ a:hover {
   background-color: var(--primary-dark);
 }
 
+.btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.forgot-password {
+  text-align: right;
+  margin-top: -0.55rem;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+}
+
+.demo-reset-link {
+  display: block;
+  width: fit-content;
+  margin: 0.85rem auto 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.demo-reset-link[hidden] {
+  display: none;
+}
+
 .auth-switch {
   text-align: center;
   margin-top: 1.25rem;
   font-size: 0.9rem;
   color: var(--text-muted);
-}
-
-/* ---- Footer ---- */
-.footer {
-  text-align: center;
-  padding: 1rem;
-  color: var(--text-muted);
-  font-size: 0.85rem;
 }
 
 /* ---- Responsive tweaks ---- */

@@ -1,0 +1,251 @@
+/* ============================================================
+   Admin dashboard styles
+   Builds on style.css tokens and student-dashboard.css layout.
+   ============================================================ */
+
+
+/* ---- Most popular category badge ---- */
+
+.popular-category-badge {
+    padding: 0.4rem 0.8rem;
+
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 600;
+    white-space: nowrap;
+
+    background-color: var(--primary);
+    border-radius: 999px;
+}
+
+
+.panel-note {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    margin-top: 0.25rem;
+}
+
+
+/* ---- Registrations by category bars ---- */
+
+.category-statistics {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+
+    margin-top: 1rem;
+}
+
+.category-row {
+    display: grid;
+    grid-template-columns: 130px 1fr 40px;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.category-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.category-bar-track {
+    height: 10px;
+
+    background-color: var(--bg);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.category-bar {
+    height: 100%;
+
+    background-color: var(--primary-light);
+    border-radius: 999px;
+}
+
+.category-row-popular .category-bar {
+    background-color: var(--primary);
+}
+
+.category-count {
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-align: right;
+}
+
+
+/* ---- Per-event admin panels ---- */
+
+.events-admin-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+
+    margin-top: 1.5rem;
+}
+
+#event-panels {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.event-admin-panel .progress-container {
+    margin: 0.75rem 0 1.25rem;
+}
+
+
+/* ---- Event metric numbers ---- */
+
+.event-metrics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+
+    margin-top: 1rem;
+}
+
+.event-metric {
+    display: flex;
+    flex-direction: column;
+}
+
+.metric-value {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+.metric-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+
+/* ---- Registrations table ---- */
+
+.table-wrapper {
+    overflow-x: auto;
+}
+
+.registrations-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+
+.registrations-table th,
+.registrations-table td {
+    padding: 0.6rem 0.75rem;
+    text-align: left;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.registrations-table th {
+    color: var(--text-muted);
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.registrations-table tbody tr:hover {
+    background-color: var(--bg);
+}
+
+.row-cancelled {
+    opacity: 0.55;
+}
+
+
+/* ---- Registration status badges ---- */
+
+.event-status.status-registered {
+    color: #0d47a1;
+    background-color: #e3f2fd;
+}
+
+.event-status.status-attended {
+    color: var(--success);
+    background-color: #e8f5e9;
+}
+
+.event-status.status-missed {
+    color: var(--error);
+    background-color: #fdecea;
+}
+
+
+/* ---- Attendance labels ---- */
+
+.attendance-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.attendance-attended {
+    color: var(--success);
+}
+
+.attendance-absent {
+    color: var(--error);
+}
+
+.attendance-unmarked {
+    color: var(--text-muted);
+}
+
+
+/* ---- Attendance buttons ---- */
+
+.attendance-actions {
+    white-space: nowrap;
+}
+
+.attendance-button {
+    padding: 0.35rem 0.7rem;
+    margin-right: 0.35rem;
+
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background-color: #ffffff;
+
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.mark-attended:hover:not(:disabled) {
+    color: #ffffff;
+    background-color: var(--success);
+    border-color: var(--success);
+}
+
+.mark-absent:hover:not(:disabled) {
+    color: #ffffff;
+    background-color: var(--error);
+    border-color: var(--error);
+}
+
+.attendance-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.45;
+}
+
+
+/* ---- Responsive ---- */
+
+@media (max-width: 700px) {
+    .category-row {
+        grid-template-columns: 100px 1fr 32px;
+    }
+
+    .event-metrics {
+        gap: 1.25rem;
+    }
+}

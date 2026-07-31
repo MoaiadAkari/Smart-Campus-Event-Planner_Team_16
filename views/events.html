@@ -1,101 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Events - Smart Campus Event Planner</title>
-
-    <link rel="stylesheet" href="../public/css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Events | Smart Campus Event Planner</title>
+  <link rel="stylesheet" href="../public/css/components/header.css">
+  <link rel="stylesheet" href="../public/css/components/footer.css">
+  <link rel="stylesheet" href="../public/css/style.css">
+  <link rel="stylesheet" href="../public/css/event-pages.css">
+  <script src="../public/js/components.js" defer></script>
+  <script src="../public/js/mock-events.js" defer></script>
+  <script src="../public/js/events.js" defer></script>
 </head>
-
 <body>
+  <div id="header-container"></div>
 
-    <nav class="navbar">
-        <a href="index.html" class="brand">Smart Campus Event Planner</a>
+  <main class="events-main">
+    <section class="events-header">
+      <p class="events-label">Campus Life</p>
+      <h1>Campus Events</h1>
+      <p>Browse upcoming events and find something that interests you.</p>
+    </section>
 
-        <ul class="nav-links">
-            <li><a href="index.html">Home</a></li>
-            <li><a href="events.html" class="active">Events</a></li>
-            <li><a href="student-dashboard.html">Dashboard</a></li>
-            <li><a href="my-registrations.html">My Registrations</a></li>
-        </ul>
-    </nav>
+    <section class="events-filters" aria-label="Event filters">
+      <label>
+        <span>Search</span>
+        <input id="events-search" type="search" placeholder="Search by title or location">
+      </label>
+      <label>
+        <span>Category</span>
+        <select id="events-category">
+          <option value="">All categories</option>
+        </select>
+      </label>
+      <label>
+        <span>Status</span>
+        <select id="events-status">
+          <option value="">All statuses</option>
+          <option value="Open">Open</option>
+          <option value="Full">Full</option>
+          <option value="Completed">Completed</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
+      </label>
+    </section>
 
-    <main class="events-main">
+    <section id="events-grid" class="events-grid" aria-live="polite"></section>
+    <p id="events-empty" class="events-empty" hidden>No events match your filters.</p>
+  </main>
 
-        <section class="events-header">
-            <h1>Campus Events</h1>
-            <p>Browse upcoming events and find something that interests you.</p>
-        </section>
-
-        <section class="events-filters">
-
-            <input type="text" placeholder="Search events...">
-
-            <select>
-                <option>All Categories</option>
-                <option>Career</option>
-                <option>Academic</option>
-                <option>Social</option>
-            </select>
-
-            <select>
-                <option>All Locations</option>
-                <option>Hall Building</option>
-                <option>Webster Library</option>
-                <option>EV Building</option>
-            </select>
-
-        </section>
-
-        <section class="events-grid">
-
-            <article class="event-card">
-                <p class="event-category">Career</p>
-                <h2>Tech Career Workshop</h2>
-                <p>August 5, 2026</p>
-                <p>Hall Building</p>
-                <p>Status: Open</p>
-
-                <a href="event-details.html?id=1" class="event-card-link">
-                    View Details
-                </a>
-            </article>
-
-            <article class="event-card">
-                <p class="event-category">Academic</p>
-                <h2>Study Skills Workshop</h2>
-                <p>August 8, 2026</p>
-                <p>Webster Library</p>
-                <p>Status: Open</p>
-
-                <a href="event-details.html?id=2" class="event-card-link">
-                    View Details
-                </a>
-            </article>
-
-            <article class="event-card">
-                <p class="event-category">Social</p>
-                <h2>Campus Welcome Night</h2>
-                <p>August 12, 2026</p>
-                <p>EV Building</p>
-                <p>Status: Open</p>
-
-                <a href="event-details.html?id=3" class="event-card-link">
-                    View Details
-                </a>
-            </article>
-
-        </section>
-
-    </main>
-
-    <footer class="footer">
-        <p>&copy; 2026 Smart Campus Event Planner</p>
-    </footer>
-
+  <div id="footer-container"></div>
 </body>
-
 </html>

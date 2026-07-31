@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manage Events | Smart Campus</title>
+  <link rel="stylesheet" href="../public/css/components/header.css">
+  <link rel="stylesheet" href="../public/css/components/footer.css">
+  <link rel="stylesheet" href="../public/css/style.css">
+  <link rel="stylesheet" href="../public/css/admin-events.css">
+  <script src="../public/js/components.js" defer></script>
+  <script src="../public/js/mock-events.js" defer></script>
+  <script src="../public/js/admin-events.js" defer></script>
+</head>
+<body>
+  <div id="header-container"></div>
+
+  <main class="admin-page">
+    <header class="admin-page-heading">
+      <div>
+        <p class="admin-page-label">Event Management</p>
+        <h1>Manage Events</h1>
+        <p>Review, edit, cancel, reopen, or delete campus events.</p>
+      </div>
+      <a class="admin-link-button" href="create-event.html">Create Event</a>
+    </header>
+
+    <div id="admin-feedback" class="admin-feedback" role="status" aria-live="polite"></div>
+
+    <section class="admin-events-panel">
+      <div class="admin-toolbar">
+        <label>
+          <span class="sr-only">Search events</span>
+          <input id="event-search" type="search" placeholder="Search by title, category, or location">
+        </label>
+        <label>
+          <span class="sr-only">Filter by status</span>
+          <select id="status-filter">
+            <option value="">All statuses</option>
+            <option value="Open">Open</option>
+            <option value="Full">Full</option>
+            <option value="Completed">Completed</option>
+            <option value="Cancelled">Cancelled</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="table-scroll">
+        <table class="admin-events-table">
+          <thead>
+            <tr>
+              <th>Event</th>
+              <th>Date and Time</th>
+              <th>Location</th>
+              <th>Capacity</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="events-table-body"></tbody>
+        </table>
+      </div>
+
+      <p id="events-empty-state" class="admin-empty-state" hidden>No events match your search.</p>
+    </section>
+  </main>
+
+  <div id="footer-container"></div>
+</body>
+</html>
