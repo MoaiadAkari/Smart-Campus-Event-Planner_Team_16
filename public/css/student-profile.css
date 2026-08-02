@@ -1,0 +1,285 @@
+/* =========================================================
+   STUDENT PROFILE PAGE
+   ========================================================= */
+
+.profile-page {
+  min-height: 75vh;
+  padding: 3rem 1.5rem;
+  background-color: var(--bg);
+}
+
+.profile-card {
+  width: 100%;
+  max-width: 850px;
+  margin: 0 auto;
+  padding: 2rem;
+
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+
+/* =========================================================
+   PROFILE HEADER
+   ========================================================= */
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+
+  padding-bottom: 1.5rem;
+  margin-bottom: 2rem;
+
+  border-bottom: 1px solid var(--border);
+}
+
+
+.profile-label {
+  margin: 0 0 0.25rem;
+
+  color: var(--primary);
+
+  font-size: 0.9rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04rem;
+}
+
+.profile-header h1 {
+  margin: 0;
+
+  color: var(--text);
+
+  font-size: 2rem;
+}
+
+.profile-description {
+  margin: 0.35rem 0 0;
+
+  color: var(--text-muted);
+
+  line-height: 1.5;
+}
+
+
+/* =========================================================
+   PROFILE FORM
+   ========================================================= */
+
+.profile-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label,
+.profile-field-label {
+  margin-bottom: 0.5rem;
+
+  color: var(--text);
+
+  font-weight: 600;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.8rem 0.9rem;
+
+  background-color: #ffffff;
+  color: var(--text);
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+
+  font: inherit;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.form-group input:focus {
+  border-color: var(--primary);
+  outline: none;
+
+  box-shadow: 0 0 0 3px rgba(145, 35, 56, 0.14);
+}
+
+.form-group input[readonly] {
+  background-color: #f0edef;
+  color: var(--text-muted);
+
+  cursor: not-allowed;
+}
+
+.form-group input.invalid {
+  border-color: var(--error);
+}
+
+.field-error {
+  min-height: 1.1rem;
+  margin-top: 0.35rem;
+
+  color: var(--error);
+
+  font-size: 0.85rem;
+}
+
+
+/* =========================================================
+   CHANGE PASSWORD LINK
+   ========================================================= */
+
+.change-password-link {
+  display: flex;
+  align-items: center;
+
+  min-height: 45px;
+  padding: 0.8rem 0.9rem;
+
+  background-color: #f0edef;
+  color: var(--primary);
+
+  border: 1px solid var(--border);
+  border-radius: 8px;
+
+  font-weight: 600;
+  text-decoration: none;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.change-password-link:hover {
+  background-color: #e5dfe2;
+  border-color: var(--primary);
+  color: var(--primary-dark);
+}
+
+.change-password-link:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(145, 35, 56, 0.14);
+}
+
+
+/* =========================================================
+   FORM BUTTONS
+   ========================================================= */
+
+.profile-actions {
+  display: flex;
+  gap: 0.75rem;
+
+  margin-top: 2rem;
+}
+
+.profile-button {
+  padding: 0.75rem 1.25rem;
+
+  border: none;
+  border-radius: 8px;
+
+  font: inherit;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.profile-button:hover {
+  transform: translateY(-1px);
+}
+
+.profile-button-primary {
+  background-color: var(--primary);
+  color: #ffffff;
+}
+
+.profile-button-primary:hover {
+  background-color: var(--primary-dark);
+}
+
+.profile-button-secondary {
+  background-color: #ece8ea;
+  color: var(--text);
+}
+
+.profile-button-secondary:hover {
+  background-color: #ddd7da;
+}
+
+.profile-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(145, 35, 56, 0.14);
+}
+
+
+/* =========================================================
+   SUCCESS AND ERROR MESSAGES
+   ========================================================= */
+
+.profile-message {
+  min-height: 1.5rem;
+  margin: 1rem 0 0;
+
+  font-weight: 600;
+}
+
+.profile-message-success {
+  color: var(--success);
+}
+
+.profile-message-error {
+  color: var(--error);
+}
+
+
+/* =========================================================
+   RESPONSIVE DESIGN
+   ========================================================= */
+
+@media (max-width: 700px) {
+  .profile-page {
+    padding: 2rem 1rem;
+  }
+
+  .profile-card {
+    padding: 1.5rem;
+  }
+
+  .profile-form-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+}
+
+@media (max-width: 500px) {
+  .profile-header {
+    align-items: flex-start;
+  }
+  
+  .profile-header h1 {
+    font-size: 1.6rem;
+  }
+
+  .profile-actions {
+    flex-direction: column;
+  }
+
+  .profile-button {
+    width: 100%;
+  }
+}
