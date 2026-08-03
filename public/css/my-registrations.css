@@ -1,0 +1,106 @@
+/* ============================================================
+   My Registrations page styles
+   Builds on event-pages.css (cards, badges, grid).
+   ============================================================ */
+
+
+/* ---- Filter buttons ---- */
+
+.registrations-filters {
+    display: flex;
+    gap: 0.5rem;
+
+    margin: 1.25rem 0;
+}
+
+.filter-button {
+    padding: 0.45rem 1rem;
+
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+
+    color: var(--text);
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.filter-button:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+}
+
+.filter-button.active {
+    color: #ffffff;
+    background-color: var(--primary);
+    border-color: var(--primary);
+}
+
+
+/* ---- Registration cards ---- */
+
+.registered-on {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+}
+
+.registration-card-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+
+    margin-top: 0.75rem;
+}
+
+.cancel-registration-btn {
+    padding: 0.45rem 0.9rem;
+
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+
+    color: var(--error);
+    background-color: transparent;
+    border: 1px solid var(--error);
+    border-radius: 6px;
+
+    transition:
+        background-color 0.15s ease,
+        color 0.15s ease;
+}
+
+.cancel-registration-btn:hover {
+    color: #ffffff;
+    background-color: var(--error);
+}
+
+
+/* ---- Empty state browse link ---- */
+
+.browse-events-link {
+    display: inline-block;
+    width: auto;
+
+    margin-top: 1rem;
+    text-decoration: none;
+}
+
+
+/* ---- Responsive ---- */
+
+@media (max-width: 480px) {
+    .registration-card-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .cancel-registration-btn {
+        width: 100%;
+    }
+}
