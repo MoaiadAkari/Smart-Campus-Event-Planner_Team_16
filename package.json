@@ -1,0 +1,26 @@
+{
+  "name": "soen_287",
+  "version": "1.0.0",
+  "description": "A full-stack Smart Campus Event Planner developed for SOEN 287, allowing students to discover and register for campus events while organizers manage events, attendance, capacity, and participation statistics.",
+  "main": "app.js",
+  "scripts": {
+  "start": "node app.js",
+  "test": "echo \"Error: no test specified\" && exit 1",
+  "dev": "nodemon app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MoaiadAkari/Smart-Campus-Event-Planner_Team_16.git"
+  },
+  "keywords": [],
+  "author": " Moaiad Akari, Samy Adjerid, Omar Obeid, Eric Dahan ",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/MoaiadAkari/Smart-Campus-Event-Planner_Team_16/issues"
+  },
+  "homepage": "https://github.com/MoaiadAkari/Smart-Campus-Event-Planner_Team_16#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}
