@@ -1,4 +1,4 @@
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     user_id INTEGER PRIMARY KEY AUTOINCREMENT,
     full_name TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
@@ -6,7 +6,7 @@ CREATE TABLE users (
     role TEXT NOT NULL
 );
 
-CREATE TABLE events (
+CREATE TABLE IF NOT EXISTS events (
     event_id INTEGER PRIMARY KEY AUTOINCREMENT,
     title TEXT NOT NULL,
     description TEXT,
@@ -21,7 +21,7 @@ CREATE TABLE events (
     FOREIGN KEY (organizer_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
 
-CREATE TABLE registrations (
+CREATE TABLE IF NOT EXISTS registrations (
     registration_id INTEGER PRIMARY KEY AUTOINCREMENT,
     user_id INTEGER NOT NULL,
     event_id INTEGER NOT NULL,
