@@ -5,44 +5,93 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>My Registrations</title>
+    <title>My Registrations | Smart Campus</title>
 
     <link rel="stylesheet" href="../public/css/components/header.css">
     <link rel="stylesheet" href="../public/css/components/footer.css">
-
+    <link rel="stylesheet" href="../public/css/style.css">
+    <link rel="stylesheet" href="../public/css/event-pages.css">
+    <link rel="stylesheet" href="../public/css/my-registrations.css">
 
     <script src="../public/js/components.js" defer></script>
+    <script src="../public/js/mock-events.js" defer></script>
+    <script src="../public/js/my-registrations.js" defer></script>
 </head>
 
 <body>
 
     <div id="header-container"></div>
 
+    <main class="events-main">
+        <header class="events-header">
+            <h1>My Registrations</h1>
 
+            <p id="registrations-summary">
+                Your registered campus events appear here.
+            </p>
+        </header>
 
+        <!-- Upcoming / past / all filter -->
+        <div
+            class="registrations-filters"
+            role="group"
+            aria-label="Filter registrations"
+        >
+            <button
+                type="button"
+                class="filter-button active"
+                data-filter="all"
+            >
+                All
+            </button>
 
+            <button
+                type="button"
+                class="filter-button"
+                data-filter="upcoming"
+            >
+                Upcoming
+            </button>
 
+            <button
+                type="button"
+                class="filter-button"
+                data-filter="past"
+            >
+                Past
+            </button>
+        </div>
 
-    <main>
-<!-- write your code here -->
+        <!-- Registration cards inserted by JavaScript -->
+        <div
+            id="registrations-grid"
+            class="events-grid"
+        ></div>
 
-        <h1>My Registrations</h1>
-        <p>This is the my registrations page.</p>
+        <!-- Empty state -->
+        <div
+            id="registrations-empty"
+            class="events-empty"
+            hidden
+        >
+            <h2>No registrations found</h2>
+
+            <p>
+                You have not registered for any events yet.
+                Browse the events page to find something interesting.
+            </p>
+
+            <a
+                href="events.html"
+                class="register-event-btn browse-events-link"
+            >
+                Browse Events
+            </a>
+        </div>
     </main>
-
-
-
-
-
-
-
-
 
     <div id="footer-container"></div>
 
 </body>
-
-
-
 
 </html>

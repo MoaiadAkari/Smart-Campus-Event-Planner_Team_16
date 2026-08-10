@@ -49,44 +49,74 @@ function getCurrentUser() {
 
 
 /*
-    Adjusts the existing header links based on the user's role.
+    Adjusts the header links based on the logged-in user's role.
 */
 function configureHeader() {
     const eventsLink = document.getElementById("events-link");
     const dashboardLink = document.getElementById("dashboard-link");
+    const profileItem = document.getElementById("profile-item");
+    const profileLink = document.getElementById("profile-link");
     const logoutLink = document.getElementById("logout-link");
 
-    if (!eventsLink || !dashboardLink || !logoutLink) {
+    if (
+        !eventsLink ||
+        !dashboardLink ||
+        !profileItem ||
+        !profileLink ||
+        !logoutLink
+    ) {
+        console.error("One or more header links could not be found.");
         return;
     }
 
     const currentUser = getCurrentUser();
 
     /*
-        This header is meant for logged-in users.
+        Hide Profile by default.
+    */
+    profileItem.hidden = true;
 
-        If no user is stored, Dashboard and Log Out will
-        direct the visitor to the login page.
-        also text is changed form log out to log in
+    /*
+        Visitor is not logged in.
     */
     if (!currentUser) {
+        eventsLink.textContent = "Events";
         eventsLink.href = "events.html";
+
         dashboardLink.href = "login.html";
+
         logoutLink.textContent = "Log In";
         logoutLink.href = "login.html";
-        
-        
+
+        highlightCurrentPage();
+        return;
+    }
+
+    if (!currentUser.role) {
+        console.error("The logged-in user does not have a role.");
+        sessionStorage.removeItem("currentUser");
         return;
     }
 
     const userRole = currentUser.role.toLowerCase();
 
+    /*
+        Student header.
+    */
     if (userRole === "student") {
         eventsLink.textContent = "Events";
         eventsLink.href = "events.html";
 
         dashboardLink.href = "student-dashboard.html";
-    } else if (
+
+        profileItem.hidden = false;
+        profileLink.href = "student-profile.html";
+    }
+
+    /*
+        Admin or organizer header.
+    */
+    else if (
         userRole === "admin" ||
         userRole === "organizer"
     ) {
@@ -94,7 +124,14 @@ function configureHeader() {
         eventsLink.href = "manage-events.html";
 
         dashboardLink.href = "admin-dashboard.html";
-    } else {
+
+        profileItem.hidden = true;
+    }
+
+    /*
+        Unknown role.
+    */
+    else {
         console.error(`Unknown user role: ${currentUser.role}`);
 
         sessionStorage.removeItem("currentUser");
@@ -118,6 +155,7 @@ function handleLogout(event) {
     event.preventDefault();
 
     sessionStorage.removeItem("currentUser");
+    sessionStorage.removeItem("currentUserId");
 
     window.location.href = "login.html";
 }

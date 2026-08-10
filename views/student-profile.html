@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Student Profile</title>
+
+  <link rel="stylesheet" href="../public/css/components/header.css">
+  <link rel="stylesheet" href="../public/css/components/footer.css">
+  <link rel="stylesheet" href="../public/css/style.css">
+  <link rel="stylesheet" href="../public/css/student-profile.css">
+
+  <script src="../public/js/components.js" defer></script>
+
+  <!-- Temporary mock database -->
+  <script src="../public/js/users.js" defer></script>
+  <script src="../public/js/student-profile.js" defer></script>
+</head>
+
+<body>
+  <div id="header-container"></div>
+
+  <main class="profile-page">
+    <section class="profile-card">
+      <div class="profile-header">
+        
+        <div>
+          <p class="profile-label">Student account</p>
+          <h1>My Profile</h1>
+          <p class="profile-description">
+            View and update your personal account information.
+          </p>
+        </div>
+      </div>
+
+      <form id="profile-form" novalidate>
+        <div class="profile-form-grid">
+
+          <div class="form-group">
+            <label for="profile-full-name">Full name:</label>
+
+            <input
+              type="text"
+              id="profile-full-name"
+              name="fullName"
+              autocomplete="name"
+              required
+            >
+
+            <small
+              class="field-error"
+              id="profile-full-name-error"
+            ></small>
+          </div>
+
+          <div class="form-group">
+            <label for="profile-email">Email address:</label>
+
+            <input
+              type="email"
+              id="profile-email"
+              name="email"
+              autocomplete="email"
+              required
+            >
+
+            <small
+              class="field-error"
+              id="profile-email-error"
+            ></small>
+          </div>
+
+          <div class="form-group">
+            <label for="profile-role">Account role:</label>
+
+            <input
+              type="text"
+              id="profile-role"
+              name="role"
+              readonly
+            >
+          </div>
+
+          <div class="form-group">
+                <label>Password:</label><a href="reset-password.html" class="change-password-link">Change Password</a>
+        
+        
+            </div>  
+
+        </div>
+
+        <div class="profile-actions">
+          <button
+            type="submit"
+            class="profile-button profile-button-primary"
+          >
+            Save Changes
+          </button>
+
+          <button
+            type="button"
+            id="cancel-profile-changes"
+            class="profile-button profile-button-secondary"
+          >
+            Cancel
+          </button>
+        </div>
+
+        <p
+          id="profile-message"
+          class="profile-message"
+          aria-live="polite"
+        ></p>
+      </form>
+    </section>
+  </main>
+
+  <div id="footer-container"></div>
+</body>
+</html>
