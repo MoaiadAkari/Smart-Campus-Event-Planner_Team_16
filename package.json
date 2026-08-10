@@ -5,8 +5,9 @@
   "main": "app.js",
   "scripts": {
     "start": "node database/initDB.js && node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon app.js"
+    "test": "node --test",
+    "test:integration": "node database/initDB.js && node tests/real-database.integration.js",
+    "dev": "node database/initDB.js && nodemon app.js"
   },
   "repository": {
     "type": "git",
@@ -21,7 +22,12 @@
   },
   "homepage": "https://github.com/MoaiadAkari/Smart-Campus-Event-Planner_Team_16#readme",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "better-sqlite3": "^13.0.3",
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "express-session": "^1.19.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }
