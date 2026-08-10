@@ -13,9 +13,8 @@
 let currentStudentUser = null;
 let activeFilter = "all";
 
-document.addEventListener("DOMContentLoaded", function () {
-    const savedUser = sessionStorage.getItem("currentUser");
-    const sessionUser = savedUser ? JSON.parse(savedUser) : null;
+document.addEventListener("DOMContentLoaded", async function () {
+    const sessionUser = await synchronizeCurrentUser();
 
     // This page is for logged-in students only
     if (!sessionUser) {
