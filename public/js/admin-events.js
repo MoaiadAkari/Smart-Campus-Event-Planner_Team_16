@@ -8,10 +8,16 @@ const EVENT_CATEGORIES = [
   "Volunteering"
 ];
 
-document.addEventListener("DOMContentLoaded", function () {
-  const currentUser = getAdminSession();
+document.addEventListener("DOMContentLoaded", async function () {
+  const currentUser = await synchronizeCurrentUser();
 
   if (!currentUser) {
+    window.location.href = "login.html";
+    return;
+  }
+
+  if (currentUser.role !== "admin" && currentUser.role !== "organizer") {
+    window.location.href = "student-dashboard.html";
     return;
   }
 
@@ -28,30 +34,6 @@ document.addEventListener("DOMContentLoaded", function () {
     initializeManageEvents();
   }
 });
-
-function getAdminSession() {
-  const savedUser = sessionStorage.getItem("currentUser");
-
-  if (!savedUser) {
-    window.location.href = "login.html";
-    return null;
-  }
-
-  try {
-    const currentUser = JSON.parse(savedUser);
-
-    if (currentUser.role !== "admin" && currentUser.role !== "organizer") {
-      window.location.href = "student-dashboard.html";
-      return null;
-    }
-
-    return currentUser;
-  } catch {
-    sessionStorage.removeItem("currentUser");
-    window.location.href = "login.html";
-    return null;
-  }
-}
 
 function populateCategoryOptions() {
   const categorySelect = document.getElementById("category");

@@ -1,4 +1,4 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
   const eventId = new URLSearchParams(window.location.search).get("id");
   const event = getStoredEventById(eventId);
   const detailsCard = document.getElementById("event-details-card");
@@ -25,15 +25,14 @@ document.addEventListener("DOMContentLoaded", function () {
   statusBadge.textContent = event.status;
   statusBadge.classList.add(`status-${event.status.toLowerCase()}`);
 
-  configureRegistrationButton(event);
+  await configureRegistrationButton(event);
 });
 
-function configureRegistrationButton(event) {
+async function configureRegistrationButton(event) {
   const button = document.getElementById("register-button");
   const helpText = document.getElementById("registration-help");
   const message = document.getElementById("registration-message");
-  const savedUser = sessionStorage.getItem("currentUser");
-  const currentUser = savedUser ? JSON.parse(savedUser) : null;
+  const currentUser = await synchronizeCurrentUser();
 
   if (event.status !== "Open") {
     button.disabled = true;
