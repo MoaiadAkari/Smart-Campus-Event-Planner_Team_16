@@ -1,6 +1,8 @@
 const express = require('express');
 const path = require('path');
 const app = express();
+const eventRoutes = require("./routes/eventRoutes");
+const registrationRoutes = require("./routes/reg");
 
 // port configuration -----------------the website will run on localhost:3000-------------
 const PORT = 3000;
@@ -19,6 +21,8 @@ app.use(express.static(path.join(__dirname, "views")));
 app.get("/api/health", (req, res) => {
 res.json({message: "Server is healthy"});
 });
+app.use("/api/events", eventRoutes);
+app.use("/api/registrations", registrationRoutes);
 
 
 // -----------------------------start server------------------------------------
