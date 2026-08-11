@@ -9,10 +9,8 @@
 
 let currentAdmin = null;
 
-document.addEventListener("DOMContentLoaded", function () {
-    const sessionUser = JSON.parse(
-        sessionStorage.getItem("currentUser")
-    );
+document.addEventListener("DOMContentLoaded", async function () {
+    const sessionUser = await synchronizeCurrentUser();
 
     // No logged-in user
     if (!sessionUser) {

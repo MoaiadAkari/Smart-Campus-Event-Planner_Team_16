@@ -7,10 +7,8 @@
 */
 let currentStudent = null;
 
-document.addEventListener("DOMContentLoaded", function () {
-    const sessionUser = JSON.parse(
-        sessionStorage.getItem("currentUser")
-    );
+document.addEventListener("DOMContentLoaded", async function () {
+    const sessionUser = await synchronizeCurrentUser();
 
     // No logged-in user
     if (!sessionUser) {
@@ -24,16 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    // Find the logged-in student inside users.js
-    currentStudent = USERS.find(
-        user => user.id === sessionUser.id
-    );
-
-    if (!currentStudent) {
-        sessionStorage.removeItem("currentUser");
-        window.location.href = "login.html";
-        return;
-    }
+    currentStudent = sessionUser;
 
     initializeDashboard();
 });
