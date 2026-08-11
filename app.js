@@ -3,6 +3,8 @@ const path = require("path");
 const session = require("express-session");
 const db = require("./database/database");
 const authRoutes = require("./routes/authRoutes");
+const eventRoutes = require("./routes/eventRoutes");
+const adminRoutes = require("./routes/adminRoutes");
 const {
   requirePageRole,
   requirePasswordResetPage
@@ -48,6 +50,8 @@ app.get(adminPages, requirePageRole("admin", "organizer"));
 app.get("/reset-password.html", requirePasswordResetPage);
 app.use(express.static(path.join(__dirname, "views")));
 app.use("/api", authRoutes);
+app.use("/api", eventRoutes);
+app.use("/api", adminRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({ message: "Server is healthy" });

@@ -1,12 +1,41 @@
-const EVENT_CATEGORIES = [
+/*
+    Admin event management — Deliverable 2
+
+    Drives three pages:
+      create-event.html   create a new event
+      edit-event.html     edit an existing event (?id=…)
+      manage-events.html  list, cancel, disable, enable, delete
+
+    All data comes from the API and every rule is enforced on the
+    server. The browser checks are a first pass for a faster response;
+    whatever the server replies with always wins, and its field errors
+    are shown under the matching inputs.
+
+    Endpoints used:
+      GET    /api/events/manage            events this user manages
+      GET    /api/events/:id               one event
+      POST   /api/events                   create
+      PUT    /api/events/:id               update
+      PATCH  /api/events/:id/status        cancel / disable / enable
+      DELETE /api/events/:id               delete
+*/
+
+// Fallback list; replaced by the categories the server sends back
+let EVENT_CATEGORIES = [
   "Academic",
   "Career",
   "Club Activity",
+  "Cultural",
   "Guest Lecture",
   "Networking",
+  "Social",
   "Sports",
-  "Volunteering"
+  "Volunteering",
+  "Other"
 ];
+
+let managedEvents = [];
+
 
 document.addEventListener("DOMContentLoaded", async function () {
   const currentUser = await synchronizeCurrentUser();
@@ -21,25 +50,64 @@ document.addEventListener("DOMContentLoaded", async function () {
     return;
   }
 
-  populateCategoryOptions();
-
   const eventForm = document.getElementById("event-form");
   const eventsTableBody = document.getElementById("events-table-body");
 
   if (eventForm) {
-    initializeEventForm(eventForm, currentUser);
+    await initializeEventForm(eventForm, currentUser);
   }
 
   if (eventsTableBody) {
-    initializeManageEvents();
+    await initializeManageEvents();
   }
 });
 
-function populateCategoryOptions() {
+
+/* --------------------------------------------------
+   API helper
+-------------------------------------------------- */
+
+async function callEventApi(path, options = {}) {
+  const response = await fetch(path, {
+    credentials: "same-origin",
+    headers: { "Content-Type": "application/json" },
+    ...options
+  });
+
+  if (response.status === 401) {
+    window.location.href = "login.html";
+    return { ok: false, status: 401, body: null };
+  }
+
+  let body = null;
+
+  try {
+    body = await response.json();
+  } catch {
+    body = null;
+  }
+
+  return { ok: response.ok, status: response.status, body };
+}
+
+
+/* --------------------------------------------------
+   Category dropdown
+-------------------------------------------------- */
+
+function populateCategoryOptions(selectedCategory) {
   const categorySelect = document.getElementById("category");
 
   if (!categorySelect) {
     return;
+  }
+
+  // Keep the placeholder option, replace the rest
+  const placeholder = categorySelect.querySelector('option[value=""]');
+  categorySelect.innerHTML = "";
+
+  if (placeholder) {
+    categorySelect.append(placeholder);
   }
 
   EVENT_CATEGORIES.forEach(category => {
@@ -48,69 +116,107 @@ function populateCategoryOptions() {
     option.textContent = category;
     categorySelect.append(option);
   });
+
+  if (selectedCategory) {
+    categorySelect.value = selectedCategory;
+  }
 }
 
-function initializeEventForm(form, currentUser) {
+
+/* --------------------------------------------------
+   Create / edit form
+-------------------------------------------------- */
+
+async function initializeEventForm(form, currentUser) {
   const eventId = new URLSearchParams(window.location.search).get("id");
   const pageTitle = document.getElementById("event-form-title");
   const submitButton = document.getElementById("event-submit");
   let eventToEdit = null;
 
-  document.getElementById("event-date").min = new Date().toISOString().split("T")[0];
+  // Stop the date picker offering past dates on a new event
+  if (!eventId) {
+    document.getElementById("event-date").min =
+      new Date().toISOString().split("T")[0];
+  }
 
   if (eventId) {
-    eventToEdit = getStoredEventById(eventId);
+    const result = await callEventApi(`/api/events/${eventId}`);
 
-    if (!eventToEdit) {
-      showAdminFeedback("The selected event could not be found.", "error");
+    if (!result.ok) {
+      showAdminFeedback(
+        result.body?.message || "The selected event could not be found.",
+        "error"
+      );
       form.hidden = true;
       return;
     }
+
+    eventToEdit = result.body.event;
 
     if (pageTitle) {
       pageTitle.textContent = "Edit Event";
     }
 
     submitButton.textContent = "Save Changes";
-    form.dataset.originalDate = eventToEdit.eventDate;
+    populateCategoryOptions(eventToEdit.category);
     fillEventForm(eventToEdit);
+  } else {
+    populateCategoryOptions();
   }
 
-  form.addEventListener("submit", function (event) {
+  form.addEventListener("submit", async function (event) {
     event.preventDefault();
 
     const eventData = readEventForm();
 
-    if (!validateEventForm(eventData)) {
+    // Browser-side pass first, for immediate feedback
+    if (!validateEventForm(eventData, Boolean(eventToEdit))) {
       return;
     }
 
-    const events = getStoredEvents();
+    submitButton.disabled = true;
+
+    const result = eventToEdit
+      ? await callEventApi(`/api/events/${eventToEdit.eventId}`, {
+        method: "PUT",
+        body: JSON.stringify(eventData)
+      })
+      : await callEventApi("/api/events", {
+        method: "POST",
+        body: JSON.stringify(eventData)
+      });
+
+    submitButton.disabled = false;
+
+    if (!result.ok) {
+      // Show the server's per-field messages under the right inputs
+      const fields = result.body?.fields || {};
+
+      Object.entries(fields).forEach(([field, message]) => {
+        setEventFieldError(toFieldId(field), message);
+      });
+
+      showAdminFeedback(
+        result.body?.message || "The event could not be saved.",
+        "error"
+      );
+
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
 
     if (eventToEdit) {
-      const eventIndex = events.findIndex(item => item.eventId === eventToEdit.eventId);
-      events[eventIndex] = {
-        ...eventToEdit,
-        ...eventData
-      };
-      saveStoredEvents(events);
       showAdminFeedback("Event changes saved successfully.", "success");
     } else {
-      events.push({
-        eventId: getNextEventId(events),
-        ...eventData,
-        status: "Open",
-        organizerId: currentUser.id,
-        createdOn: new Date().toISOString().split("T")[0]
-      });
-      saveStoredEvents(events);
       form.reset();
+      populateCategoryOptions();
       showAdminFeedback("Event created successfully.", "success");
     }
 
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 
+  // Clear a field's error as soon as the user edits it
   form.addEventListener("input", function (event) {
     if (event.target.matches("input, select, textarea")) {
       setEventFieldError(event.target.id, "");
@@ -118,16 +224,27 @@ function initializeEventForm(form, currentUser) {
   });
 }
 
+
+/*
+    The server names fields in camelCase (eventDate); the inputs use
+    hyphens (event-date). This converts between them.
+*/
+function toFieldId(fieldName) {
+  return fieldName.replace(/[A-Z]/g, letter => `-${letter.toLowerCase()}`);
+}
+
+
 function fillEventForm(event) {
   document.getElementById("title").value = event.title;
-  document.getElementById("description").value = event.description;
+  document.getElementById("description").value = event.description || "";
   document.getElementById("category").value = event.category;
   document.getElementById("event-date").value = event.eventDate;
   document.getElementById("start-time").value = event.startTime;
   document.getElementById("end-time").value = event.endTime;
-  document.getElementById("location").value = event.location;
   document.getElementById("capacity").value = event.capacity;
+  document.getElementById("location").value = event.location;
 }
+
 
 function readEventForm() {
   return {
@@ -142,27 +259,29 @@ function readEventForm() {
   };
 }
 
-function validateEventForm(eventData) {
+
+/*
+    First-pass validation in the browser. The server repeats all of
+    this — these checks only make the form feel responsive.
+*/
+function validateEventForm(eventData, isEditing) {
   let valid = true;
-  const today = new Date().toISOString().split("T")[0];
 
   valid = requireEventField("title", eventData.title, "Event title is required.") && valid;
-  valid = requireEventField("description", eventData.description, "Description is required.") && valid;
-  valid = requireEventField("category", eventData.category, "Please select a category.") && valid;
+  valid = requireEventField("category", eventData.category, "Please choose a category.") && valid;
   valid = requireEventField("event-date", eventData.eventDate, "Event date is required.") && valid;
   valid = requireEventField("start-time", eventData.startTime, "Start time is required.") && valid;
   valid = requireEventField("end-time", eventData.endTime, "End time is required.") && valid;
-  valid = requireEventField("location", eventData.location, "Location is required.") && valid;
+  valid = requireEventField("location", eventData.location, "Event location is required.") && valid;
 
-  const originalDate = document.getElementById("event-form").dataset.originalDate;
+  // A new event may not be scheduled in the past
+  if (!isEditing && eventData.eventDate) {
+    const todayString = new Date().toISOString().split("T")[0];
 
-  if (
-    eventData.eventDate &&
-    eventData.eventDate < today &&
-    eventData.eventDate !== originalDate
-  ) {
-    setEventFieldError("event-date", "Event date cannot be in the past.");
-    valid = false;
+    if (eventData.eventDate < todayString) {
+      setEventFieldError("event-date", "Event date cannot be in the past.");
+      valid = false;
+    }
   }
 
   if (eventData.startTime && eventData.endTime && eventData.endTime <= eventData.startTime) {
@@ -170,22 +289,14 @@ function validateEventForm(eventData) {
     valid = false;
   }
 
-  if (!Number.isInteger(eventData.capacity) || eventData.capacity < 1 || eventData.capacity > 10000) {
-    setEventFieldError("capacity", "Capacity must be a whole number between 1 and 10,000.");
+  if (!Number.isInteger(eventData.capacity) || eventData.capacity < 1) {
+    setEventFieldError("capacity", "Capacity must be a whole number of at least 1.");
     valid = false;
-  } else {
-    setEventFieldError("capacity", "");
-  }
-
-  if (!valid) {
-    showAdminFeedback("Please correct the highlighted fields.", "error");
-    document.querySelector(".invalid")?.focus();
-  } else {
-    showAdminFeedback("", "");
   }
 
   return valid;
 }
+
 
 function requireEventField(fieldId, value, message) {
   if (!value) {
@@ -197,16 +308,20 @@ function requireEventField(fieldId, value, message) {
   return true;
 }
 
+
 function setEventFieldError(fieldId, message) {
   const field = document.getElementById(fieldId);
-  const error = document.getElementById(`${fieldId}-error`);
+  const errorElement = document.getElementById(`${fieldId}-error`);
 
-  field?.classList.toggle("invalid", Boolean(message));
+  if (field) {
+    field.classList.toggle("invalid", Boolean(message));
+  }
 
-  if (error) {
-    error.textContent = message;
+  if (errorElement) {
+    errorElement.textContent = message || "";
   }
 }
+
 
 function showAdminFeedback(message, type) {
   const feedback = document.getElementById("admin-feedback");
@@ -216,54 +331,91 @@ function showAdminFeedback(message, type) {
   }
 
   feedback.textContent = message;
-  feedback.className = type ? `admin-feedback ${type}` : "admin-feedback";
+  feedback.className = `admin-feedback ${type}`;
+  feedback.hidden = false;
 }
 
-function initializeManageEvents() {
-  const searchInput = document.getElementById("event-search");
-  const statusFilter = document.getElementById("status-filter");
+
+/* --------------------------------------------------
+   Manage events page
+-------------------------------------------------- */
+
+async function initializeManageEvents() {
+  document.getElementById("event-search")
+    .addEventListener("input", renderManagedEvents);
+
+  document.getElementById("status-filter")
+    .addEventListener("change", renderManagedEvents);
+
+  document.getElementById("events-table-body")
+    .addEventListener("click", async function (event) {
+      const actionButton = event.target.closest("[data-event-action]");
+
+      if (!actionButton) {
+        return;
+      }
+
+      await handleEventAction(
+        actionButton.dataset.eventAction,
+        Number(actionButton.dataset.eventId)
+      );
+    });
+
+  await loadManagedEvents();
+}
+
+
+async function loadManagedEvents() {
+  const result = await callEventApi("/api/events/manage");
+
+  if (!result.ok) {
+    showAdminFeedback(
+      result.body?.message || "Unable to load your events.",
+      "error"
+    );
+    return;
+  }
+
+  managedEvents = result.body.events || [];
+
+  if (Array.isArray(result.body.categories)) {
+    EVENT_CATEGORIES = result.body.categories;
+  }
 
   renderManagedEvents();
-
-  searchInput.addEventListener("input", renderManagedEvents);
-  statusFilter.addEventListener("change", renderManagedEvents);
-
-  document.getElementById("events-table-body").addEventListener("click", function (event) {
-    const actionButton = event.target.closest("[data-event-action]");
-
-    if (!actionButton) {
-      return;
-    }
-
-    handleEventAction(
-      actionButton.dataset.eventAction,
-      Number(actionButton.dataset.eventId)
-    );
-  });
 }
+
 
 function renderManagedEvents() {
   const tableBody = document.getElementById("events-table-body");
   const emptyState = document.getElementById("events-empty-state");
   const searchTerm = document.getElementById("event-search").value.trim().toLowerCase();
   const selectedStatus = document.getElementById("status-filter").value;
-  const events = getStoredEvents()
+
+  const events = managedEvents
     .filter(event => {
       const matchesSearch =
         event.title.toLowerCase().includes(searchTerm) ||
         event.category.toLowerCase().includes(searchTerm) ||
         event.location.toLowerCase().includes(searchTerm);
+
       const matchesStatus = !selectedStatus || event.status === selectedStatus;
+
       return matchesSearch && matchesStatus;
     })
-    .sort((firstEvent, secondEvent) => firstEvent.eventDate.localeCompare(secondEvent.eventDate));
+    .sort((firstEvent, secondEvent) =>
+      firstEvent.eventDate.localeCompare(secondEvent.eventDate)
+    );
 
   tableBody.innerHTML = events.map(createManagedEventRow).join("");
   emptyState.hidden = events.length > 0;
 }
 
+
 function createManagedEventRow(event) {
   const isCancelled = event.status === "Cancelled";
+  const isDisabled = event.status === "Disabled";
+
   const formattedDate = new Intl.DateTimeFormat("en-CA", {
     month: "short",
     day: "numeric",
@@ -278,42 +430,70 @@ function createManagedEventRow(event) {
       </td>
       <td>${formattedDate}<br>${formatEventTime(event.startTime)}</td>
       <td>${escapeEventText(event.location)}</td>
-      <td>${event.capacity}</td>
+      <td>${event.registeredCount} / ${event.capacity}</td>
       <td><span class="status-badge status-${event.status.toLowerCase()}">${event.status}</span></td>
       <td>
         <div class="admin-event-actions">
           <a class="admin-action-button secondary" href="edit-event.html?id=${event.eventId}">Edit</a>
-          <button class="admin-action-button secondary" type="button" data-event-action="toggle" data-event-id="${event.eventId}">
+
+          <button class="admin-action-button secondary" type="button"
+                  data-event-action="toggle" data-event-id="${event.eventId}">
             ${isCancelled ? "Reopen" : "Cancel"}
           </button>
-          <button class="admin-action-button danger" type="button" data-event-action="delete" data-event-id="${event.eventId}">Delete</button>
+
+          <button class="admin-action-button secondary" type="button"
+                  data-event-action="disable" data-event-id="${event.eventId}">
+            ${isDisabled ? "Enable" : "Disable"}
+          </button>
+
+          <button class="admin-action-button danger" type="button"
+                  data-event-action="delete" data-event-id="${event.eventId}">
+            Delete
+          </button>
         </div>
       </td>
     </tr>
   `;
 }
 
-function handleEventAction(action, eventId) {
-  const events = getStoredEvents();
-  const eventIndex = events.findIndex(event => event.eventId === eventId);
 
-  if (eventIndex === -1) {
+async function handleEventAction(action, eventId) {
+  const selectedEvent = managedEvents.find(event => event.eventId === eventId);
+
+  if (!selectedEvent) {
     return;
   }
 
-  const selectedEvent = events[eventIndex];
+  if (action === "toggle" || action === "disable") {
+    const nextStatus = action === "toggle"
+      ? (selectedEvent.status === "Cancelled" ? "Open" : "Cancelled")
+      : (selectedEvent.status === "Disabled" ? "Open" : "Disabled");
 
-  if (action === "toggle") {
-    const nextStatus = selectedEvent.status === "Cancelled" ? "Open" : "Cancelled";
-    const actionName = nextStatus === "Cancelled" ? "cancel" : "reopen";
+    const actionName = {
+      Cancelled: "cancel",
+      Disabled: "disable",
+      Open: "reopen"
+    }[nextStatus];
 
     if (!window.confirm(`Are you sure you want to ${actionName} "${selectedEvent.title}"?`)) {
       return;
     }
 
-    selectedEvent.status = nextStatus;
-    saveStoredEvents(events);
-    showAdminFeedback(`Event ${nextStatus === "Cancelled" ? "cancelled" : "reopened"} successfully.`, "success");
+    const result = await callEventApi(`/api/events/${eventId}/status`, {
+      method: "PATCH",
+      body: JSON.stringify({ status: nextStatus })
+    });
+
+    if (!result.ok) {
+      showAdminFeedback(
+        result.body?.message || "The event status could not be changed.",
+        "error"
+      );
+      return;
+    }
+
+    // The server decides the final status (Open may become Full)
+    showAdminFeedback(result.body.message, "success");
   }
 
   if (action === "delete") {
@@ -321,13 +501,28 @@ function handleEventAction(action, eventId) {
       return;
     }
 
-    events.splice(eventIndex, 1);
-    saveStoredEvents(events);
+    const result = await callEventApi(`/api/events/${eventId}`, {
+      method: "DELETE"
+    });
+
+    if (!result.ok) {
+      showAdminFeedback(
+        result.body?.message || "The event could not be deleted.",
+        "error"
+      );
+      return;
+    }
+
     showAdminFeedback("Event deleted successfully.", "success");
   }
 
-  renderManagedEvents();
+  await loadManagedEvents();
 }
+
+
+/* --------------------------------------------------
+   Formatting helpers
+-------------------------------------------------- */
 
 function formatEventTime(time) {
   const [hours, minutes] = time.split(":").map(Number);
@@ -340,8 +535,9 @@ function formatEventTime(time) {
   }).format(date);
 }
 
+
 function escapeEventText(value) {
-  return String(value)
+  return String(value ?? "")
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")

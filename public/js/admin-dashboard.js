@@ -1,197 +1,119 @@
 /*
-    Admin Dashboard
-    Mock frontend data for Deliverable 1.
+    Admin Dashboard — Deliverable 2
 
-    The mockAdminEvents, mockStudents, and mockAdminRegistrations
-    arrays are temporary and will be replaced by database data
-    in Deliverable 2.
+    Every figure on this page comes from the database through the API.
+    Nothing is calculated in the browser: capacity percentages,
+    attendance rates and category totals are all computed server-side,
+    which is what the project specification requires.
+
+    Endpoints used:
+      GET   /api/admin/statistics                     summary + per-event figures
+      GET   /api/events/:id/registrations              students registered
+      PATCH /api/admin/registrations/:id/attendance    mark attended / absent
 */
 
 let currentAdmin = null;
+let dashboardData = null;
 
 document.addEventListener("DOMContentLoaded", async function () {
+    // Ask the server who is signed in rather than trusting the browser
     const sessionUser = await synchronizeCurrentUser();
 
-    // No logged-in user
     if (!sessionUser) {
         window.location.href = "login.html";
         return;
     }
 
-    // Prevent students from accessing the admin dashboard
-    if (
-        sessionUser.role !== "admin" &&
-        sessionUser.role !== "organizer"
-    ) {
+    if (sessionUser.role !== "admin" && sessionUser.role !== "organizer") {
         window.location.href = "student-dashboard.html";
         return;
     }
 
     currentAdmin = sessionUser;
 
-    initializeAdminDashboard();
+    displayAdminGreeting();
+    await loadDashboard();
 });
 
 
 /* --------------------------------------------------
-   Date helper (same approach as the student dashboard)
+   API helper
 -------------------------------------------------- */
 
-function getDateFromToday(numberOfDays) {
-    const date = new Date();
-
-    date.setDate(date.getDate() + numberOfDays);
-
-    return date.toISOString().split("T")[0];
-}
-
-
-/* --------------------------------------------------
-   Temporary mock data
--------------------------------------------------- */
-
-const mockAdminEvents = getStoredEvents();
-
-
-const mockStudents = [
-    { id: 1, fullName: "Sam Student", email: "student@demo.com" },
-    { id: 3, fullName: "Maya Chen", email: "maya.chen@demo.com" },
-    { id: 4, fullName: "Omar Haddad", email: "omar.haddad@demo.com" },
-    { id: 5, fullName: "Julia Tremblay", email: "julia.tremblay@demo.com" },
-    { id: 6, fullName: "Daniel Roy", email: "daniel.roy@demo.com" },
-    { id: 7, fullName: "Aisha Karim", email: "aisha.karim@demo.com" }
-];
-
-
-let mockAdminRegistrations = [
-    // Resume workshop (upcoming)
-    { registrationId: 1, userId: 1, eventId: 1, registrationDate: getDateFromToday(-5), status: "Registered", attended: false },
-    { registrationId: 2, userId: 3, eventId: 1, registrationDate: getDateFromToday(-4), status: "Registered", attended: false },
-    { registrationId: 3, userId: 4, eventId: 1, registrationDate: getDateFromToday(-3), status: "Cancelled", attended: false },
-
-    // Web development workshop (upcoming)
-    { registrationId: 4, userId: 1, eventId: 2, registrationDate: getDateFromToday(-4), status: "Registered", attended: false },
-    { registrationId: 5, userId: 5, eventId: 2, registrationDate: getDateFromToday(-2), status: "Registered", attended: false },
-
-    // Networking evening (completed → attendance can be marked)
-    { registrationId: 6, userId: 1, eventId: 3, registrationDate: getDateFromToday(-20), status: "Attended", attended: true },
-    { registrationId: 7, userId: 3, eventId: 3, registrationDate: getDateFromToday(-18), status: "Attended", attended: true },
-    { registrationId: 8, userId: 5, eventId: 3, registrationDate: getDateFromToday(-16), status: "Missed", attended: false },
-    { registrationId: 9, userId: 6, eventId: 3, registrationDate: getDateFromToday(-15), status: "Registered", attended: false },
-
-    // Volunteering day (full: 4 of 4 seats)
-    { registrationId: 10, userId: 3, eventId: 7, registrationDate: getDateFromToday(-5), status: "Registered", attended: false },
-    { registrationId: 11, userId: 4, eventId: 7, registrationDate: getDateFromToday(-4), status: "Registered", attended: false },
-    { registrationId: 12, userId: 6, eventId: 7, registrationDate: getDateFromToday(-3), status: "Registered", attended: false },
-    { registrationId: 13, userId: 7, eventId: 7, registrationDate: getDateFromToday(-2), status: "Registered", attended: false }
-];
-
-
-/* --------------------------------------------------
-   Data helper functions
--------------------------------------------------- */
-
-function findStudentById(userId) {
-    return mockStudents.find(
-        student => student.id === userId
-    );
-}
-
-
-// A registration counts toward capacity unless it was cancelled
-function getActiveRegistrations(eventId) {
-    return mockAdminRegistrations.filter(
-        registration =>
-            registration.eventId === eventId &&
-            registration.status !== "Cancelled"
-    );
-}
-
-
-function getAllRegistrationsForEvent(eventId) {
-    return mockAdminRegistrations.filter(
-        registration => registration.eventId === eventId
-    );
-}
-
-
-// Percentage of seats filled (server-side in Deliverable 2)
-function getCapacityPercentage(event) {
-    const registered =
-        getActiveRegistrations(event.eventId).length;
-
-    if (event.capacity === 0) {
-        return 0;
-    }
-
-    return Math.round((registered / event.capacity) * 100);
-}
-
-
-// Attendance rate = attended / active registrations
-function getAttendanceRate(eventId) {
-    const activeRegistrations =
-        getActiveRegistrations(eventId);
-
-    if (activeRegistrations.length === 0) {
-        return 0;
-    }
-
-    const attendedCount =
-        activeRegistrations.filter(
-            registration => registration.attended
-        ).length;
-
-    return Math.round(
-        (attendedCount / activeRegistrations.length) * 100
-    );
-}
-
-
-/* --------------------------------------------------
-   Category statistics
--------------------------------------------------- */
-
-function getRegistrationsByCategory() {
-    const categoryTotals = {};
-
-    mockAdminRegistrations.forEach(registration => {
-        if (registration.status === "Cancelled") {
-            return;
-        }
-
-        const event = mockAdminEvents.find(
-            event => event.eventId === registration.eventId
-        );
-
-        if (!event) {
-            return;
-        }
-
-        categoryTotals[event.category] =
-            (categoryTotals[event.category] || 0) + 1;
+/*
+    Wraps fetch so every call sends the session cookie and returns
+    the parsed body along with the status.
+*/
+async function callApi(path, options = {}) {
+    const response = await fetch(path, {
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        ...options
     });
 
-    return categoryTotals;
+    // The session expired while the page was open
+    if (response.status === 401) {
+        window.location.href = "login.html";
+        return { ok: false, status: 401, body: null };
+    }
+
+    let body = null;
+
+    try {
+        body = await response.json();
+    } catch {
+        body = null;
+    }
+
+    return { ok: response.ok, status: response.status, body };
 }
 
 
-function getMostPopularCategory() {
-    const categoryTotals = getRegistrationsByCategory();
+/* --------------------------------------------------
+   Loading
+-------------------------------------------------- */
 
-    let popularCategory = null;
-    let highestCount = 0;
+async function loadDashboard() {
+    const result = await callApi("/api/admin/statistics");
 
-    Object.entries(categoryTotals).forEach(
-        ([category, count]) => {
-            if (count > highestCount) {
-                popularCategory = category;
-                highestCount = count;
-            }
-        }
-    );
+    if (!result.ok) {
+        showDashboardError(
+            result.body?.message || "Unable to load dashboard data."
+        );
+        return;
+    }
 
-    return popularCategory;
+    dashboardData = result.body;
+
+    displayAdminSummaryCards();
+    displayCategoryStatistics();
+    await displayEventPanels();
+}
+
+
+function showDashboardError(message) {
+    const container = document.getElementById("event-panels");
+
+    if (container) {
+        container.innerHTML = `
+            <article class="dashboard-panel">
+                <p class="panel-note">${escapeAdminText(message)}</p>
+            </article>
+        `;
+    }
+}
+
+
+/* --------------------------------------------------
+   Greeting
+-------------------------------------------------- */
+
+function displayAdminGreeting() {
+    const greeting = document.getElementById("admin-greeting");
+
+    if (greeting) {
+        greeting.textContent = `Welcome back, ${currentAdmin.fullName}!`;
+    }
 }
 
 
@@ -200,50 +122,14 @@ function getMostPopularCategory() {
 -------------------------------------------------- */
 
 function displayAdminSummaryCards() {
-    const container =
-        document.getElementById("admin-summary-cards");
-
-    const totalEvents = mockAdminEvents.length;
-
-    const totalRegistrations =
-        mockAdminRegistrations.filter(
-            registration =>
-                registration.status !== "Cancelled"
-        ).length;
-
-    const fullEvents =
-        mockAdminEvents.filter(
-            event =>
-                getActiveRegistrations(event.eventId).length >=
-                event.capacity
-        ).length;
-
-    const attendedTotal =
-        mockAdminRegistrations.filter(
-            registration => registration.attended
-        ).length;
+    const container = document.getElementById("admin-summary-cards");
+    const totals = dashboardData.totals;
 
     const summaryCards = [
-        {
-            title: "Total Events",
-            value: totalEvents,
-            icon: "📋"
-        },
-        {
-            title: "Total Registrations",
-            value: totalRegistrations,
-            icon: "🎟️"
-        },
-        {
-            title: "Events at Capacity",
-            value: fullEvents,
-            icon: "🚫"
-        },
-        {
-            title: "Students Attended",
-            value: attendedTotal,
-            icon: "✅"
-        }
+        { title: "Total Events", value: totals.totalEvents, icon: "📋" },
+        { title: "Total Registrations", value: totals.totalRegistrations, icon: "🎟️" },
+        { title: "Events at Capacity", value: totals.eventsAtCapacity, icon: "🚫" },
+        { title: "Students Attended", value: totals.totalAttended, icon: "✅" }
     ];
 
     container.innerHTML = summaryCards
@@ -267,63 +153,48 @@ function displayAdminSummaryCards() {
 
 
 /* --------------------------------------------------
-   Category statistics panel
+   Registrations by category
 -------------------------------------------------- */
 
 function displayCategoryStatistics() {
-    const container =
-        document.getElementById("category-statistics");
+    const container = document.getElementById("category-statistics");
+    const popularBadge = document.getElementById("popular-category");
 
-    const popularBadge =
-        document.getElementById("popular-category");
-
-    const categoryTotals = getRegistrationsByCategory();
-    const entries = Object.entries(categoryTotals);
-
-    const popularCategory = getMostPopularCategory();
+    const categoryTotals = dashboardData.categoryTotals || [];
+    const popularCategory = dashboardData.popularCategory;
 
     popularBadge.textContent = popularCategory
         ? `Most popular: ${popularCategory}`
         : "No registrations yet";
 
-    if (entries.length === 0) {
+    if (categoryTotals.length === 0) {
         container.innerHTML =
-            "<p>No registrations to display.</p>";
+            "<p class='panel-note'>No registrations to display.</p>";
         return;
     }
 
-    const highestCount = Math.max(
-        ...entries.map(([, count]) => count)
-    );
+    // The API sorts highest first, so the first row is the largest
+    const highestCount = categoryTotals[0].count;
 
-    container.innerHTML = entries
-        .sort(
-            (entryA, entryB) => entryB[1] - entryA[1]
-        )
-        .map(([category, count]) => {
-            const barWidth = Math.round(
-                (count / highestCount) * 100
-            );
+    container.innerHTML = categoryTotals
+        .map(entry => {
+            const barWidth = highestCount > 0
+                ? Math.round((entry.count / highestCount) * 100)
+                : 0;
 
-            const isPopular =
-                category === popularCategory;
+            const isPopular = entry.category === popularCategory;
 
             return `
                 <div class="category-row ${isPopular ? "category-row-popular" : ""}">
                     <span class="category-name">
-                        ${category}
+                        ${escapeAdminText(entry.category)}
                     </span>
 
                     <div class="category-bar-track">
-                        <div
-                            class="category-bar"
-                            style="width: ${barWidth}%"
-                        ></div>
+                        <div class="category-bar" style="width: ${barWidth}%"></div>
                     </div>
 
-                    <span class="category-count">
-                        ${count}
-                    </span>
+                    <span class="category-count">${entry.count}</span>
                 </div>
             `;
         })
@@ -335,39 +206,145 @@ function displayCategoryStatistics() {
    Per-event panels
 -------------------------------------------------- */
 
-function createRegistrationRow(registration) {
-    const student =
-        findStudentById(registration.userId);
+async function displayEventPanels() {
+    const container = document.getElementById("event-panels");
+    const events = dashboardData.events || [];
 
-    if (!student) {
-        return "";
+    if (events.length === 0) {
+        container.innerHTML = `
+            <article class="dashboard-panel">
+                <p class="panel-note">
+                    No events yet. Use Create Event to add the first one.
+                </p>
+            </article>
+        `;
+        return;
     }
 
-    const isCancelled =
-        registration.status === "Cancelled";
+    // Fetch every event's registrant list in parallel
+    const registrationLists = await Promise.all(
+        events.map(event =>
+            callApi(`/api/events/${event.eventId}/registrations`)
+        )
+    );
 
-    const attendanceLabel = registration.attended
+    container.innerHTML = events
+        .map((event, index) => {
+            const result = registrationLists[index];
+            const registrations = result.ok ? result.body.registrations : [];
+
+            return createEventPanel(event, registrations);
+        })
+        .join("");
+}
+
+
+function createEventPanel(event, registrations) {
+    const table = registrations.length === 0
+        ? "<p class='panel-note'>No students registered for this event.</p>"
+        : `
+            <div class="table-wrapper">
+                <table class="registrations-table">
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Email</th>
+                            <th>Registered On</th>
+                            <th>Status</th>
+                            <th>Attendance</th>
+                            <th>Mark Attendance</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        ${registrations.map(createRegistrationRow).join("")}
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+    return `
+        <article class="dashboard-panel event-admin-panel">
+            <div class="panel-heading">
+                <div>
+                    <p class="panel-label">${escapeAdminText(event.category)}</p>
+                    <h2>${escapeAdminText(event.title)}</h2>
+
+                    <p class="panel-note">
+                        ${formatAdminDate(event.eventDate)}
+                        · ${escapeAdminText(event.location)}
+                    </p>
+                </div>
+
+                <span class="event-status status-${event.status.toLowerCase()}">
+                    ${event.status}
+                </span>
+            </div>
+
+            <div class="event-metrics">
+                <div class="event-metric">
+                    <span class="metric-value">
+                        ${event.registeredCount} / ${event.capacity}
+                    </span>
+                    <span class="metric-label">Registered</span>
+                </div>
+
+                <div class="event-metric">
+                    <span class="metric-value">${event.capacityPercentage}%</span>
+                    <span class="metric-label">Seats Filled</span>
+                </div>
+
+                <div class="event-metric">
+                    <span class="metric-value">${event.attendanceRate}%</span>
+                    <span class="metric-label">Attendance Rate</span>
+                </div>
+            </div>
+
+            <div
+                class="progress-container"
+                role="progressbar"
+                aria-label="Seats filled"
+                aria-valuemin="0"
+                aria-valuemax="100"
+                aria-valuenow="${event.capacityPercentage}"
+            >
+                <div
+                    class="progress-bar"
+                    style="width: ${Math.min(event.capacityPercentage, 100)}%"
+                ></div>
+            </div>
+
+            ${table}
+        </article>
+    `;
+}
+
+
+function createRegistrationRow(registration) {
+    const isCancelled = registration.status === "Cancelled";
+
+    const attendanceLabel = registration.status === "Attended"
         ? "Attended"
         : registration.status === "Missed"
             ? "Absent"
             : "Not marked";
 
-    const attendanceClass = registration.attended
+    const attendanceClass = registration.status === "Attended"
         ? "attendance-attended"
         : registration.status === "Missed"
             ? "attendance-absent"
             : "attendance-unmarked";
 
-    // Cancelled registrations cannot be marked
+    // Cancelled registrations cannot be marked (the server refuses too)
     const actionButtons = isCancelled
         ? "—"
         : `
             <button
                 type="button"
                 class="attendance-button mark-attended"
-                data-action="attended"
+                data-action="Attended"
                 data-registration-id="${registration.registrationId}"
-                ${registration.attended ? "disabled" : ""}
+                ${registration.status === "Attended" ? "disabled" : ""}
             >
                 Attended
             </button>
@@ -375,7 +352,7 @@ function createRegistrationRow(registration) {
             <button
                 type="button"
                 class="attendance-button mark-absent"
-                data-action="absent"
+                data-action="Missed"
                 data-registration-id="${registration.registrationId}"
                 ${registration.status === "Missed" ? "disabled" : ""}
             >
@@ -385,12 +362,12 @@ function createRegistrationRow(registration) {
 
     return `
         <tr class="${isCancelled ? "row-cancelled" : ""}">
-            <td>${student.fullName}</td>
-            <td>${student.email}</td>
-            <td>${registration.registrationDate}</td>
+            <td>${escapeAdminText(registration.studentName)}</td>
+            <td>${escapeAdminText(registration.studentEmail)}</td>
+            <td>${formatAdminDate(registration.registrationDate)}</td>
 
             <td>
-                <span class="event-status ${getRegistrationStatusClass(registration.status)}">
+                <span class="event-status status-${registration.status.toLowerCase()}">
                     ${registration.status}
                 </span>
             </td>
@@ -409,189 +386,70 @@ function createRegistrationRow(registration) {
 }
 
 
-function getRegistrationStatusClass(status) {
-    return `status-${status.toLowerCase()}`;
-}
-
-
-function createEventPanel(event) {
-    const allRegistrations =
-        getAllRegistrationsForEvent(event.eventId);
-
-    const activeCount =
-        getActiveRegistrations(event.eventId).length;
-
-    const capacityPercentage =
-        getCapacityPercentage(event);
-
-    const attendanceRate =
-        getAttendanceRate(event.eventId);
-
-    const tableRows = allRegistrations
-        .map(createRegistrationRow)
-        .join("");
-
-    const table = allRegistrations.length === 0
-        ? "<p class='panel-note'>No students registered for this event.</p>"
-        : `
-            <div class="table-wrapper">
-                <table class="registrations-table">
-                    <thead>
-                        <tr>
-                            <th>Student</th>
-                            <th>Email</th>
-                            <th>Registered On</th>
-                            <th>Status</th>
-                            <th>Attendance</th>
-                            <th>Mark Attendance</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        ${tableRows}
-                    </tbody>
-                </table>
-            </div>
-        `;
-
-    return `
-        <article class="dashboard-panel event-admin-panel">
-            <div class="panel-heading">
-                <div>
-                    <p class="panel-label">${event.category}</p>
-                    <h2>${event.title}</h2>
-
-                    <p class="panel-note">
-                        ${event.eventDate} · ${event.location}
-                    </p>
-                </div>
-
-                <span class="event-status status-${event.status.toLowerCase()}">
-                    ${event.status}
-                </span>
-            </div>
-
-            <div class="event-metrics">
-                <div class="event-metric">
-                    <span class="metric-value">
-                        ${activeCount} / ${event.capacity}
-                    </span>
-                    <span class="metric-label">Registered</span>
-                </div>
-
-                <div class="event-metric">
-                    <span class="metric-value">
-                        ${capacityPercentage}%
-                    </span>
-                    <span class="metric-label">Seats Filled</span>
-                </div>
-
-                <div class="event-metric">
-                    <span class="metric-value">
-                        ${attendanceRate}%
-                    </span>
-                    <span class="metric-label">Attendance Rate</span>
-                </div>
-            </div>
-
-            <div
-                class="progress-container"
-                role="progressbar"
-                aria-label="Seats filled"
-                aria-valuemin="0"
-                aria-valuemax="100"
-                aria-valuenow="${capacityPercentage}"
-            >
-                <div
-                    class="progress-bar"
-                    style="width: ${Math.min(capacityPercentage, 100)}%"
-                ></div>
-            </div>
-
-            ${table}
-        </article>
-    `;
-}
-
-
-function displayEventPanels() {
-    const container =
-        document.getElementById("event-panels");
-
-    container.innerHTML = mockAdminEvents
-        .map(createEventPanel)
-        .join("");
-}
-
-
 /* --------------------------------------------------
    Attendance marking
 -------------------------------------------------- */
 
-function markAttendance(registrationId, action) {
-    const registration =
-        mockAdminRegistrations.find(
-            registration =>
-                registration.registrationId === registrationId
-        );
-
-    if (!registration) {
-        return;
-    }
-
-    if (registration.status === "Cancelled") {
-        return;
-    }
-
-    if (action === "attended") {
-        registration.status = "Attended";
-        registration.attended = true;
-    } else if (action === "absent") {
-        registration.status = "Missed";
-        registration.attended = false;
-    }
-
-    refreshAdminDashboard();
-}
-
-
-document.addEventListener("click", function (event) {
-    const button = event.target.closest(
-        ".attendance-button"
-    );
+document.addEventListener("click", async function (event) {
+    const button = event.target.closest(".attendance-button");
 
     if (!button) {
         return;
     }
 
-    markAttendance(
-        Number(button.dataset.registrationId),
-        button.dataset.action
+    // Prevent a second click while the request is in flight
+    button.disabled = true;
+
+    const result = await callApi(
+        `/api/admin/registrations/${button.dataset.registrationId}/attendance`,
+        {
+            method: "PATCH",
+            body: JSON.stringify({ status: button.dataset.action })
+        }
     );
+
+    if (!result.ok) {
+        button.disabled = false;
+        window.alert(result.body?.message || "Unable to update attendance.");
+        return;
+    }
+
+    // Reload so every figure reflects the change
+    await loadDashboard();
 });
 
 
 /* --------------------------------------------------
-   Render dashboard
+   Formatting helpers
 -------------------------------------------------- */
 
-function displayAdminGreeting() {
-    const greeting =
-        document.getElementById("admin-greeting");
+function formatAdminDate(value) {
+    if (!value) {
+        return "—";
+    }
 
-    greeting.textContent =
-        `Welcome back, ${currentAdmin.fullName}!`;
+    // Registration dates are timestamps; event dates are YYYY-MM-DD
+    const date = value.includes(" ") || value.includes("T")
+        ? new Date(value.replace(" ", "T"))
+        : new Date(`${value}T00:00:00`);
+
+    if (Number.isNaN(date.getTime())) {
+        return "—";
+    }
+
+    return new Intl.DateTimeFormat("en-CA", {
+        month: "short",
+        day: "numeric",
+        year: "numeric"
+    }).format(date);
 }
 
 
-function refreshAdminDashboard() {
-    displayAdminSummaryCards();
-    displayCategoryStatistics();
-    displayEventPanels();
-}
-
-
-function initializeAdminDashboard() {
-    displayAdminGreeting();
-    refreshAdminDashboard();
+function escapeAdminText(value) {
+    return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 }
