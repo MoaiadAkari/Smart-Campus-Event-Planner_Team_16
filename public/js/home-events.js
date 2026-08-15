@@ -1,27 +1,41 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
   const container = document.getElementById("home-event-grid");
 
   if (!container) {
     return;
   }
 
-  const upcomingEvents = getStoredEvents()
-    .filter(event => {
-      const eventDateTime = new Date(`${event.eventDate}T${event.startTime}:00`);
-      return eventDateTime > new Date() && event.status !== "Cancelled";
-    })
-    .sort((firstEvent, secondEvent) => firstEvent.eventDate.localeCompare(secondEvent.eventDate))
-    .slice(0, 3);
+  try {
+    const response = await fetch("/api/events");
+    const payload = await response.json();
 
-  container.innerHTML = upcomingEvents.map(event => `
-    <article class="home-event-card">
-      <p class="event-category">${escapeHomeText(event.category)}</p>
-      <h3>${escapeHomeText(event.title)}</h3>
-      <p>${formatHomeDate(event.eventDate)}</p>
-      <p>${escapeHomeText(event.location)}</p>
-      <a href="event-details.html?id=${event.eventId}">View Details</a>
-    </article>
-  `).join("");
+    if (!response.ok) {
+      throw new Error(payload.message || "Unable to load events.");
+    }
+
+    const upcomingEvents = (payload.events || [])
+      .filter(event =>
+        new Date(`${event.eventDate}T${event.startTime}:00`) > new Date()
+        && !["Cancelled", "Disabled", "Completed"].includes(event.status)
+      )
+      .slice(0, 3);
+
+    container.innerHTML = upcomingEvents.map(event => `
+      <article class="home-event-card">
+        <p class="event-category">${escapeHomeText(event.category)}</p>
+        <h3>${escapeHomeText(event.title)}</h3>
+        <p>${formatHomeDate(event.eventDate)}</p>
+        <p>${escapeHomeText(event.location)}</p>
+        <a href="event-details.html?id=${event.eventId}">View Details</a>
+      </article>
+    `).join("");
+
+    if (upcomingEvents.length === 0) {
+      container.innerHTML = "<p>No upcoming events are available.</p>";
+    }
+  } catch (error) {
+    container.innerHTML = `<p>${escapeHomeText(error.message)}</p>`;
+  }
 });
 
 function formatHomeDate(dateString) {

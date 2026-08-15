@@ -249,7 +249,8 @@
   background-color: #e8eef5;
 }
 
-.status-cancelled {
+.status-cancelled,
+.status-disabled {
   color: var(--error);
   background-color: #fdeaea;
 }

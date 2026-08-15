@@ -5,6 +5,7 @@ const db = require("./database/database");
 const authRoutes = require("./routes/authRoutes");
 const eventRoutes = require("./routes/eventRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const registrationRoutes = require("./routes/registrationRoutes");
 const {
   requirePageRole,
   requirePasswordResetPage
@@ -52,6 +53,7 @@ app.use(express.static(path.join(__dirname, "views")));
 app.use("/api", authRoutes);
 app.use("/api", eventRoutes);
 app.use("/api", adminRoutes);
+app.use("/api", registrationRoutes);
 
 app.get("/api/health", (req, res) => {
   res.json({ message: "Server is healthy" });

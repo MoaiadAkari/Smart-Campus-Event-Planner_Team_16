@@ -157,7 +157,28 @@ function validateEvent(body, { allowPastDate = false } = {}) {
 */
 async function listEvents(req, res) {
   const db = getDatabase(req);
-  const events = await Event.findAll(db);
+  const allEvents = await Event.findAll(db);
+  const search = String(req.query.search || "").trim().toLowerCase();
+  const category = String(req.query.category || "").trim();
+  const date = String(req.query.date || "").trim();
+  const location = String(req.query.location || "").trim().toLowerCase();
+  const organizer = String(req.query.organizer || "").trim().toLowerCase();
+  const status = String(req.query.status || "").trim();
+  const events = allEvents.filter(event => {
+    const searchable = [
+      event.title,
+      event.description,
+      event.location,
+      event.organizerName
+    ].join(" ").toLowerCase();
+
+    return (!search || searchable.includes(search))
+      && (!category || event.category === category)
+      && (!date || event.eventDate === date)
+      && (!location || event.location.toLowerCase().includes(location))
+      && (!organizer || String(event.organizerName || "").toLowerCase().includes(organizer))
+      && (!status || event.status === status);
+  });
 
   return res.json({ events, categories: CATEGORIES });
 }

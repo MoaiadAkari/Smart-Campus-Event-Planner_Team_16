@@ -9,7 +9,6 @@
   <link rel="stylesheet" href="../public/css/style.css">
   <link rel="stylesheet" href="../public/css/event-pages.css">
   <script src="../public/js/components.js" defer></script>
-  <script src="../public/js/mock-events.js" defer></script>
   <script src="../public/js/events.js" defer></script>
 </head>
 <body>
@@ -25,13 +24,17 @@
     <section class="events-filters" aria-label="Event filters">
       <label>
         <span>Search</span>
-        <input id="events-search" type="search" placeholder="Search by title or location">
+        <input id="events-search" type="search" placeholder="Title, location, or organizer">
       </label>
       <label>
         <span>Category</span>
         <select id="events-category">
           <option value="">All categories</option>
         </select>
+      </label>
+      <label>
+        <span>Date</span>
+        <input id="events-date" type="date">
       </label>
       <label>
         <span>Status</span>
@@ -41,6 +44,7 @@
           <option value="Full">Full</option>
           <option value="Completed">Completed</option>
           <option value="Cancelled">Cancelled</option>
+          <option value="Disabled">Disabled</option>
         </select>
       </label>
     </section>
